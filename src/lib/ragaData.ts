@@ -60,6 +60,48 @@ export const MOCK_RAGAS: Raga[] = [
     jati: 'Sampurna-Sampurna',
     confidence: 85.2,
     description: 'A versatile and emotionally rich raga often played as the concluding piece of a concert.'
+  },
+  {
+    id: 'malkauns',
+    name: 'Malkauns',
+    thaat: 'Bhairavi',
+    arohana: 'S g M d n Ṡ',
+    avarohana: 'Ṡ n d M g S',
+    pakad: 'g M d n d M g S',
+    vadi: 'Madhyam (M)',
+    samvadi: 'Shadaj (S)',
+    time: 'Late night (12am–3am)',
+    mood: ['Shant', 'Veer'],
+    jati: 'Audav-Audav',
+    description: 'One of the oldest ragas, Malkauns is a heavy, meditative raga believed to have been created by Goddess Parvati.'
+  },
+  {
+    id: 'bhimpalasi',
+    name: 'Bhimpalasi',
+    thaat: 'Kafi',
+    arohana: 'n S g M P n Ṡ',
+    avarohana: 'Ṡ n D P M g R S',
+    pakad: 'n S M g P M P g R S',
+    vadi: 'Madhyam (M)',
+    samvadi: 'Shadaj (S)',
+    time: 'Late afternoon (3pm–6pm)',
+    mood: ['Shringar', 'Karuna'],
+    jati: 'Audav-Sampurna',
+    description: 'A deeply melodic raga that captures the essence of a late afternoon, transitioning into evening.'
+  },
+  {
+    id: 'darbari',
+    name: 'Darbari Kanada',
+    thaat: 'Asavari',
+    arohana: 'S R g M P d n Ṡ',
+    avarohana: 'Ṡ n d P M g R S',
+    pakad: 'g M R S — d n P — M g R S',
+    vadi: 'Rishabh (R)',
+    samvadi: 'Pancham (P)',
+    time: 'Midnight',
+    mood: ['Gambhir', 'Bhakti'],
+    jati: 'Sampurna-Sampurna',
+    description: 'A grand and majestic raga, originally said to have been performed in the court (Darbar) of Emperor Akbar.'
   }
 ];
 
