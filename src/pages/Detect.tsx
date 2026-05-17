@@ -8,8 +8,11 @@ import { MughalCorners } from '../components/ui/MughalCorners';
 import { Divider } from '../components/ui/Divider';
 import { motion } from 'motion/react';
 
+import { useNavigate } from 'react-router-dom';
+
 export const Detect: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto min-h-screen">
@@ -28,7 +31,20 @@ export const Detect: React.FC = () => {
             <Waveform isRecording={isRecording} />
           </div>
 
-          <div className="mughal-card p-12 border-dashed border-2 flex flex-col items-center justify-center border-teak-border hover:border-kesar-gold/50 transition-all cursor-pointer group">
+          <div 
+            onClick={() => {
+              // Simulate upload
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'audio/*';
+              input.onchange = () => {
+                setIsRecording(true);
+                setTimeout(() => setIsRecording(false), 3000);
+              };
+              input.click();
+            }}
+            className="mughal-card p-12 border-dashed border-2 flex flex-col items-center justify-center border-teak-border hover:border-kesar-gold/50 transition-all cursor-pointer group"
+          >
             <div className="w-16 h-16 rounded-full bg-deep-raat flex items-center justify-center border border-teak-border mb-6 group-hover:scale-110 transition-transform">
                 <LayoutGrid className="text-mitti group-hover:text-kesar-gold transition-colors" size={24} />
             </div>
@@ -48,11 +64,15 @@ export const Detect: React.FC = () => {
             
             <div className="space-y-4">
                 {[
-                  { name: 'Yaman', date: 'Oct 12, 10:45 AM', match: '92.4%' },
-                  { name: 'Bhairav', date: 'Oct 11, 09:20 PM', match: '88.7%' },
-                  { name: 'Bhairavi', date: 'Oct 10, 06:15 PM', match: '85.2%' }
+                  { id: 'yaman', name: 'Yaman', date: 'Oct 12, 10:45 AM', match: '92.4%' },
+                  { id: 'malkauns', name: 'Malkauns', date: 'Oct 11, 09:20 PM', match: '88.7%' },
+                  { id: 'bhimpalasi', name: 'Bhimpalasi', date: 'Oct 10, 06:15 PM', match: '85.2%' }
                 ].map((item, i) => (
-                  <div key={i} className="flex justify-between items-center p-3 sub-card border border-teak-border/30 rounded-lg hover:border-kesar-gold/40 transition-colors cursor-pointer group">
+                  <div 
+                    key={i} 
+                    onClick={() => navigate(`/raga/${item.id}`)}
+                    className="flex justify-between items-center p-3 sub-card border border-teak-border/30 rounded-lg hover:border-kesar-gold/40 transition-colors cursor-pointer group"
+                  >
                     <div>
                       <h4 className="text-sm font-bold text-ivory group-hover:text-kesar-gold transition-colors">{item.name}</h4>
                       <p className="text-[10px] text-mitti mt-0.5">{item.date}</p>
@@ -99,7 +119,10 @@ export const Detect: React.FC = () => {
                 </div>
 
                 <div className="mt-10 pt-6 border-t border-teak-border/50">
-                    <button className="text-ivory text-xs font-bold uppercase tracking-[2px] flex items-center gap-2 hover:text-kesar-gold transition-colors">
+                    <button 
+                      onClick={() => navigate(`/raga/${MOCK_RAGAS[0].id}`)}
+                      className="text-ivory text-xs font-bold uppercase tracking-[2px] flex items-center gap-2 hover:text-kesar-gold transition-colors"
+                    >
                         View Detailed Insights <Search size={14} />
                     </button>
                 </div>

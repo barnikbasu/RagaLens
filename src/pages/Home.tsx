@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Hero } from '../components/layout/Hero';
 import { Waveform } from '../components/audio/Waveform';
 import { TaalCircle } from '../components/audio/TaalCircle';
@@ -15,10 +16,9 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-import { Link } from 'react-router-dom';
-
 export const Home: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="pt-[64px]">
@@ -63,12 +63,15 @@ export const Home: React.FC = () => {
                 <div onClick={() => setIsRecording(!isRecording)} className="cursor-pointer">
                 <Waveform isRecording={isRecording} />
                 </div>
-                <div className="mughal-card p-12 border-dashed border-2 flex flex-col items-center justify-center border-teak-border hover:border-kesar-gold/50 transition-all cursor-pointer group">
-                <div className="w-16 h-16 rounded-full bg-deep-raat flex items-center justify-center border border-teak-border mb-6 group-hover:scale-110 transition-transform">
-                    <LayoutGrid className="text-mitti group-hover:text-kesar-gold transition-colors" size={24} />
-                </div>
-                <p className="text-ivory font-display text-lg">Upload Archive</p>
-                <p className="text-[13px] text-mitti mt-2">Drop your .mp3 or .wav files for instant deep analysis</p>
+                <div 
+                  onClick={() => navigate('/detect')}
+                  className="mughal-card p-12 border-dashed border-2 flex flex-col items-center justify-center border-teak-border hover:border-kesar-gold/50 transition-all cursor-pointer group"
+                >
+                  <div className="w-16 h-16 rounded-full bg-deep-raat flex items-center justify-center border border-teak-border mb-6 group-hover:scale-110 transition-transform">
+                      <LayoutGrid className="text-mitti group-hover:text-kesar-gold transition-colors" size={24} />
+                  </div>
+                  <p className="text-ivory font-display text-lg">Upload Archive</p>
+                  <p className="text-[13px] text-mitti mt-2">Drop your .mp3 or .wav files for instant deep analysis</p>
                 </div>
             </div>
 
@@ -96,7 +99,10 @@ export const Home: React.FC = () => {
                         </div>
                     </div>
 
-                    <button className="w-full py-3 text-[11px] font-bold uppercase tracking-[2px] border border-teak-border hover:border-kesar-gold text-mitti hover:text-kesar-gold transition-all">
+                    <button 
+                      onClick={() => navigate('/detect')}
+                      className="w-full py-3 text-[11px] font-bold uppercase tracking-[2px] border border-teak-border hover:border-kesar-gold text-mitti hover:text-kesar-gold transition-all"
+                    >
                         Full Analysis Report
                     </button>
                 </div>
@@ -189,7 +195,10 @@ export const Home: React.FC = () => {
             </div>
             <div className="flex flex-wrap gap-3">
                 {['Daily Practice', 'Tabla & Laya', 'AI Maestro', 'Future Tools'].map((tab, i) => (
-                <button key={tab} className={cn(
+                <button 
+                  key={tab} 
+                  onClick={() => navigate('/toolkit')}
+                  className={cn(
                     "px-8 py-3 border rounded-full text-[12px] font-bold uppercase tracking-[1px] transition-all",
                     i === 0 ? "bg-kesar-gold text-deep-raat border-kesar-gold" : "border-teak-border text-mitti hover:border-kesar-gold hover:text-kesar-gold"
                 )}>
@@ -200,14 +209,38 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <ToolCard category="Gold" title="Smart Tanpura" description="Studio-quality drones that adapt to your vocal texture and resonance." />
-            <ToolCard category="Teal" title="Laya Calculator" description="Compute matras, vibhaags, and precise tihai points for complex taals." />
-            <ToolCard category="Crimson" title="Bol Trainer" description="Visual bol guide with AI-assisted pronunciation and rhythmic timing." />
-            <ToolCard category="Purple" title="Swara Galaxy" description="An interactive 3D visualization of raga relationships and hierarchies." />
-            <ToolCard category="Gold" title="Shruti Map" description="Map all 22 shrutis with microtonal precision during performance." />
-            <ToolCard category="Teal" title="Metronome Pro" description="Advanced tala grid with customizable human-feel swing and accents." />
-            <ToolCard category="Crimson" title="Tihai Builder" description="One-tap generation of tihais based on any current beat and speed." />
-            <ToolCard category="Purple" title="Resonance Lab" description="Deep analysis of your voice harmonics and resonance chamber quality." />
+            <ToolCard 
+              onClick={() => navigate('/toolkit')}
+              category="Gold" title="Smart Tanpura" description="Studio-quality drones that adapt to your vocal texture and resonance." 
+            />
+            <ToolCard 
+              onClick={() => navigate('/toolkit')}
+              category="Teal" title="Laya Calculator" description="Compute matras, vibhaags, and precise tihai points for complex taals." 
+            />
+            <ToolCard 
+              onClick={() => navigate('/toolkit')}
+              category="Crimson" title="Bol Trainer" description="Visual bol guide with AI-assisted pronunciation and rhythmic timing." 
+            />
+            <ToolCard 
+              onClick={() => navigate('/toolkit')}
+              category="Purple" title="Swara Galaxy" description="An interactive 3D visualization of raga relationships and hierarchies." 
+            />
+            <ToolCard 
+              onClick={() => navigate('/toolkit')}
+              category="Gold" title="Shruti Map" description="Map all 22 shrutis with microtonal precision during performance." 
+            />
+            <ToolCard 
+              onClick={() => navigate('/toolkit')}
+              category="Teal" title="Metronome Pro" description="Advanced tala grid with customizable human-feel swing and accents." 
+            />
+            <ToolCard 
+              onClick={() => navigate('/toolkit')}
+              category="Crimson" title="Tihai Builder" description="One-tap generation of tihais based on any current beat and speed." 
+            />
+            <ToolCard 
+              onClick={() => navigate('/toolkit')}
+              category="Purple" title="Resonance Lab" description="Deep analysis of your voice harmonics and resonance chamber quality." 
+            />
         </div>
       </div>
     </div>
@@ -234,7 +267,7 @@ function FeatureCard({ icon, title, description, to }: { icon: React.ReactNode, 
   );
 }
 
-function ToolCard({ category, title, description }: { category: 'Gold' | 'Teal' | 'Crimson' | 'Purple', title: string, description: string }) {
+function ToolCard({ category, title, description, onClick }: { category: 'Gold' | 'Teal' | 'Crimson' | 'Purple', title: string, description: string, onClick?: () => void }) {
   const colors = {
     Gold: 'border-kesar-gold',
     Teal: 'border-morpankh',
@@ -245,7 +278,8 @@ function ToolCard({ category, title, description }: { category: 'Gold' | 'Teal' 
   return (
     <motion.div 
       whileHover={{ y: -4 }}
-      className="mughal-card p-5 group flex flex-col hover:border-kesar-gold transition-colors duration-300"
+      onClick={onClick}
+      className="mughal-card p-5 group flex flex-col hover:border-kesar-gold transition-colors duration-300 cursor-pointer"
     >
       <div className="flex items-start gap-4 h-full">
          <div className={cn("w-1 self-stretch rounded-full", colors[category])} style={{ 

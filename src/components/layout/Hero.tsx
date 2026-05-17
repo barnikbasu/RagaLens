@@ -1,10 +1,13 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { MughalCorners } from '../ui/MughalCorners';
 import { LotusTile } from '../ui/Divider';
 import { ArrowRight } from 'lucide-react';
 
 export const Hero: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative w-full min-h-screen flex items-center overflow-hidden pt-16">
       {/* Background & Texture */}
@@ -54,10 +57,16 @@ export const Hero: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.7 }}
             className="flex flex-wrap gap-6"
           >
-            <button className="grad-cta text-deep-raat px-10 py-4 rounded-full text-sm font-bold flex items-center gap-2 group hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-kesar-gold/10">
+            <button 
+              onClick={() => navigate('/detect')}
+              className="grad-cta text-deep-raat px-10 py-4 rounded-full text-sm font-bold flex items-center gap-2 group hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-kesar-gold/10"
+            >
               DETECT YOUR RAGA →
             </button>
-            <button className="border border-kesar-gold text-kesar-gold px-10 py-4 rounded-full text-sm font-bold hover:bg-kesar-gold/10 active:scale-95 transition-all">
+            <button 
+              onClick={() => navigate('/learn')}
+              className="border border-kesar-gold text-kesar-gold px-10 py-4 rounded-full text-sm font-bold hover:bg-kesar-gold/10 active:scale-95 transition-all"
+            >
               EXPLORE GURUS
             </button>
           </motion.div>

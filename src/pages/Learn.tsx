@@ -1,11 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { MughalCorners } from '../components/ui/MughalCorners';
 import { BookOpen, Play, CheckCircle2, ChevronRight, Trophy, Star } from 'lucide-react';
-import { cn } from '../lib/utils';
 import { Divider } from '../components/ui/Divider';
 
 export const Learn: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto min-h-screen">
       <div className="flex flex-col md:flex-row justify-between items-start mb-20 gap-12">
@@ -42,11 +43,12 @@ export const Learn: React.FC = () => {
 
       {/* Courses Section */}
       <h2 className="text-2xl font-display text-ivory mb-10 flex items-center gap-3">
-        <Star className="text-kesar-gold" size={24} /> Recommended for You
+        < Star className="text-kesar-gold" size={24} /> Recommended for You
       </h2>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-24">
          <CourseCard 
+            onClick={() => navigate('/learn/yaman-foundations')}
             title="The Foundations of Yaman" 
             difficulty="Intermediate" 
             duration="12 Lessons" 
@@ -54,6 +56,7 @@ export const Learn: React.FC = () => {
             progress={45}
          />
          <CourseCard 
+            onClick={() => navigate('/learn/sargam-rhythmics')}
             title="Sargam & Rhythmics in Teentaal" 
             difficulty="Beginner" 
             duration="8 Lessons" 
@@ -67,16 +70,19 @@ export const Learn: React.FC = () => {
       {/* Learning Path Categories */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24">
          <PathCard 
+          onClick={() => navigate('/learn/theory')}
           icon={<BookOpen className="text-kesar-gold" />} 
           title="Theoretical Depth" 
           description="Exploring the 72 Melakarta system, Thaats, and historical evolution of ragas." 
          />
          <PathCard 
+          onClick={() => navigate('/learn/riyaaz')}
           icon={<Play className="text-morpankh" />} 
           title="Practical Riyaz" 
           description="Guided vocal and instrumental exercises focusing on pitch accuracy and Alankar patterns." 
          />
          <PathCard 
+          onClick={() => navigate('/learn/masterclasses')}
           icon={<CheckCircle2 className="text-raga-purple" />} 
           title="Masterclasses" 
           description="Exclusive recordings and breakdowns of performances by contemporary maestros." 
@@ -86,8 +92,8 @@ export const Learn: React.FC = () => {
   );
 };
 
-const CourseCard = ({ title, difficulty, duration, image, progress }: { title: string, difficulty: string, duration: string, image: string, progress: number }) => (
-  <div className="mughal-card group flex flex-col md:flex-row overflow-hidden hover:border-kesar-gold/50 transition-all cursor-pointer">
+const CourseCard = ({ title, difficulty, duration, image, progress, onClick }: { title: string, difficulty: string, duration: string, image: string, progress: number, onClick?: () => void }) => (
+  <div onClick={onClick} className="mughal-card group flex flex-col md:flex-row overflow-hidden hover:border-kesar-gold/50 transition-all cursor-pointer">
      <div className="md:w-1/3 relative h-48 md:h-auto overflow-hidden">
         <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
         <div className="absolute inset-0 bg-deep-raat/40" />
@@ -122,8 +128,8 @@ const CourseCard = ({ title, difficulty, duration, image, progress }: { title: s
   </div>
 );
 
-const PathCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
-  <div className="mughal-card p-10 group hover:-translate-y-2 transition-all duration-500">
+const PathCard = ({ icon, title, description, onClick }: { icon: React.ReactNode, title: string, description: string, onClick?: () => void }) => (
+  <div onClick={onClick} className="mughal-card p-10 group hover:-translate-y-2 transition-all duration-500 cursor-pointer">
     <div className="w-14 h-14 rounded-2xl bg-deep-raat border border-teak-border flex items-center justify-center mb-8 group-hover:scale-110 group-hover:border-kesar-gold transition-all duration-500">
       {icon}
     </div>

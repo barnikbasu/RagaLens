@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { cn } from '@/src/lib/utils';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { cn } from '../../lib/utils';
 import { Menu, X, Hexagon } from 'lucide-react';
 
 export const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const links = [
     { name: 'Explore', path: '/explore' },
@@ -52,7 +53,10 @@ export const Navigation: React.FC = () => {
           <button className="text-[12px] font-bold uppercase tracking-[2px] text-sandstone hover:text-ivory transition-colors">
             Sign In
           </button>
-          <button className="grad-cta text-deep-raat px-8 py-2.5 rounded-full text-[12px] font-bold shadow-lg hover:brightness-110 active:scale-95 transition-all">
+          <button 
+            onClick={() => navigate('/detect')}
+            className="grad-cta text-deep-raat px-8 py-2.5 rounded-full text-[12px] font-bold shadow-lg hover:brightness-110 active:scale-95 transition-all"
+          >
             GET STARTED
           </button>
         </div>
@@ -83,7 +87,10 @@ export const Navigation: React.FC = () => {
             <button className="w-full py-5 rounded-xl border border-teak-border text-sandstone font-bold uppercase tracking-widest text-xs">
               Sign In
             </button>
-            <button className="w-full py-5 rounded-xl grad-cta text-deep-raat font-bold uppercase tracking-widest text-xs">
+            <button 
+              onClick={() => { navigate('/detect'); setIsOpen(false); }}
+              className="w-full py-5 rounded-xl grad-cta text-deep-raat font-bold uppercase tracking-widest text-xs"
+            >
               Start Free
             </button>
           </div>

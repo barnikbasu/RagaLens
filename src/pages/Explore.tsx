@@ -5,6 +5,8 @@ import { MughalCorners } from '../components/ui/MughalCorners';
 import { Search, Filter, Clock, Heart, Music, ArrowRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 
+import { useNavigate } from 'react-router-dom';
+
 export const Explore: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedThaat, setSelectedThaat] = useState('All');
@@ -82,11 +84,13 @@ export const Explore: React.FC = () => {
 };
 
 const RagaGridCard = ({ raga, index }: { raga: Raga, index: number, key?: any }) => {
+  const navigate = useNavigate();
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
+      onClick={() => navigate(`/raga/${raga.id}`)}
       className="mughal-card group cursor-pointer"
     >
       <MughalCorners opacity={0.3} />
@@ -97,7 +101,10 @@ const RagaGridCard = ({ raga, index }: { raga: Raga, index: number, key?: any })
       <div className="px-8 pb-8 pt-2">
         <div className="flex justify-between items-start mb-4">
           <span className="text-[10px] font-bold tracking-[3px] text-mitti uppercase">{raga.thaat} Thaat</span>
-          <button className="text-mitti hover:text-sindoor transition-colors">
+          <button 
+            onClick={(e) => { e.stopPropagation(); }}
+            className="text-mitti hover:text-sindoor transition-colors"
+          >
             <Heart size={16} />
           </button>
         </div>
