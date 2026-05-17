@@ -1,0 +1,6 @@
+{
+  "name": "RagaLens",
+  "description": "The Operating System for Indian Classical Music. AI-powered platform to detect, learn, and experience Indian Classical Music with premium UI/UX.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
