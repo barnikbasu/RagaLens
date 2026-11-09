@@ -1,113 +1,164 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { ArrowLeft, Play, SkipBack, SkipForward, List, Settings, Maximize2 } from 'lucide-react';
-import { MughalCorners } from '../components/ui/MughalCorners';
+import { ArrowLeft, Play, Pause, SkipBack, SkipForward, List, Settings, Maximize2, Check } from 'lucide-react';
+import { cn } from '../lib/utils';
+import { audioEngine } from '../lib/audioEngine';
 
 export const CoursePlayer: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [activeTrack, setActiveTrack] = useState(4);
+
+  const tracks = [
+    { number: 1, title: 'Introduction to Kalyan Thaat', duration: '12:40', completed: true },
+    { number: 2, title: 'Grammar and Structure of Yaman', duration: '18:15', completed: true },
+    { number: 3, title: 'The Tivra Madhyam in Yaman', duration: '24:10', completed: true },
+    { number: 4, title: 'The Intricacies of Rishabh', duration: '22:30', active: true },
+    { number: 5, title: 'Descending Patterns (Avaroha Taan)', duration: '30:05' },
+    { number: 6, title: 'Meend and Microtonal Oscillations', duration: '26:45' },
+    { number: 7, title: 'Tihais in Vilambit Teentaal', duration: '15:20' }
+  ];
+
+  const togglePlay = () => {
+    if (isPlaying) {
+      audioEngine.stopTanpura();
+      setIsPlaying(false);
+    } else {
+      audioEngine.startTanpura('Pa', 138.59);
+      setIsPlaying(true);
+    }
+  };
 
   return (
-    <div className="pt-24 pb-20 px-6 min-h-screen bg-deep-raat flex flex-col">
-      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col lg:flex-row gap-12">
-        {/* Left: Video Player Area */}
-        <div className="lg:w-2/3 flex flex-col gap-8">
-           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-mitti hover:text-kesar-gold transition-colors text-xs font-bold uppercase tracking-widest w-fit">
-              <ArrowLeft size={16} /> Back to Course
-           </button>
-           
-           <div className="aspect-video mughal-card bg-black flex items-center justify-center relative group overflow-hidden">
-              <MughalCorners opacity={0.2} />
-              <img src="https://images.unsplash.com/photo-1598387181032-a3103a2db5b3?auto=format&fit=crop&q=80&w=1200" className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale" />
-              <div className="relative z-10 w-24 h-24 rounded-full border-2 border-ivory/50 flex items-center justify-center text-ivory/50 backdrop-blur-md group-hover:scale-110 group-hover:border-kesar-gold group-hover:text-kesar-gold transition-all cursor-pointer">
-                 <Play fill="currentColor" size={40} />
-              </div>
-              
-              {/* Controls Overlay */}
-              <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                 <div className="flex items-center gap-6">
-                    <SkipBack size={20} className="text-ivory cursor-pointer hover:text-kesar-gold" />
-                    <Play size={24} className="text-ivory cursor-pointer hover:text-kesar-gold" />
-                    <SkipForward size={20} className="text-ivory cursor-pointer hover:text-kesar-gold" />
-                    <div className="flex-1 h-1 bg-ivory/20 rounded-full relative">
-                       <div className="absolute left-0 top-0 h-full w-1/3 bg-kesar-gold rounded-full" />
-                    </div>
-                    <div className="flex items-center gap-4 text-ivory">
-                       <Settings size={18} className="cursor-pointer hover:text-kesar-gold" />
-                       <Maximize2 size={18} className="cursor-pointer hover:text-kesar-gold" />
-                    </div>
-                 </div>
-              </div>
-           </div>
+    <div className="pt-8 pb-24 px-6 min-h-screen bg-[#F5F2EC] dark:bg-[#171716] text-[#252421] dark:text-[#F2EEE7] transition-colors">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        <button
+          onClick={() => navigate('/learn')}
+          className="flex items-center gap-2 text-xs font-semibold text-[#77736D] hover:text-[#252421] dark:hover:text-[#F2EEE7] uppercase tracking-wider"
+        >
+          <ArrowLeft size={14} />
+          <span>Back to Learning Studio</span>
+        </button>
 
-           <div className="space-y-6">
-              <div className="flex justify-between items-end">
-                 <div>
-                    <span className="text-kesar-gold text-[10px] font-bold tracking-[3px] uppercase">Lesson 4 of 12</span>
-                    <h1 className="text-4xl font-display text-ivory mt-2">The Intricacies of Rishabh in Yaman</h1>
-                 </div>
-                 <div className="flex gap-4">
-                    <button className="px-6 py-2 border border-teak-border rounded-full text-xs font-bold text-mitti hover:border-kesar-gold hover:text-kesar-gold transition-colors">Resources</button>
-                    <button className="px-6 py-2 border border-teak-border rounded-full text-xs font-bold text-mitti hover:border-kesar-gold hover:text-kesar-gold transition-colors">Discussion</button>
-                 </div>
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          
+          {/* Left: Video & Audio Lesson Workspace */}
+          <div className="lg:w-2/3 space-y-6">
+            
+            {/* Visual Canvas Player Area */}
+            <div className="aspect-video bg-[#22211F] rounded-lg border border-[#DCD6CC] dark:border-[#2E2D2A] relative flex items-center justify-center overflow-hidden shadow-lg group">
+              <div className="absolute inset-0 bg-cover bg-center opacity-30 grayscale" style={{ backgroundImage: "url('/public/assets/aistudio/image_91622b1d.png')" }} />
+              
+              <button
+                onClick={togglePlay}
+                className="relative z-10 w-20 h-20 rounded-full border border-white/40 bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:scale-105 hover:bg-[#A9232D] hover:border-[#A9232D] transition-all cursor-pointer"
+              >
+                {isPlaying ? <Pause size={30} /> : <Play fill="currentColor" size={30} className="ml-1" />}
+              </button>
+
+              {/* Media Controls Bar */}
+              <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 to-transparent flex items-center justify-between text-white text-xs">
+                <div className="flex items-center gap-4">
+                  <button onClick={togglePlay} className="hover:text-[#A9232D] transition-colors">
+                    {isPlaying ? <Pause size={18} /> : <Play size={18} fill="currentColor" />}
+                  </button>
+                  <span className="font-mono text-[11px] text-[#DCD6CC]">
+                    {isPlaying ? '04:12' : '00:00'} / 22:30
+                  </span>
+                </div>
+
+                <div className="flex-1 max-w-md mx-6 h-1 bg-white/20 rounded-full overflow-hidden">
+                  <div className={`h-full bg-[#A9232D] ${isPlaying ? 'w-1/4' : 'w-0'}`} />
+                </div>
+
+                <div className="flex items-center gap-3 text-[#DCD6CC]">
+                  <Settings size={16} className="hover:text-white cursor-pointer" />
+                  <Maximize2 size={16} className="hover:text-white cursor-pointer" />
+                </div>
               </div>
-              <p className="text-sandstone leading-relaxed">
-                 In this lesson, Guru Ji explains the specific treatment of Rishabh (Re) in Raga Yaman, which is often omitted in the Arohana and used delicately in the Avarohana to maintain the raga's identity.
+            </div>
+
+            {/* Lesson Details */}
+            <div className="p-6 rounded-lg bg-white dark:bg-[#22211F] border border-[#DCD6CC] dark:border-[#2E2D2A] space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-[#A9232D] font-bold">
+                    LESSON 4 OF 12 · MADHYAMA LEVEL
+                  </span>
+                  <h1 className="text-2xl md:text-3xl font-bold text-[#252421] dark:text-[#F2EEE7] mt-0.5">
+                    The Intricacies of Rishabh in Yaman
+                  </h1>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button className="px-3 py-1.5 rounded border border-[#DCD6CC] dark:border-[#2E2D2A] text-xs font-semibold hover:border-[#252421]">
+                    Resources
+                  </button>
+                  <button className="px-3 py-1.5 rounded bg-[#252421] dark:bg-[#F2EEE7] text-[#F5F2EC] dark:text-[#171716] text-xs font-semibold hover:bg-[#A9232D]">
+                    Discussion
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-xs md:text-sm text-[#77736D] leading-relaxed">
+                In this masterclass, the guru explains the specific treatment of Rishabh (Re) in Raga Yaman. While Rishabh is prominent in descent (Avarohana), it is deliberately approached through Nishad in the ascent (Ṇ R G) rather than starting directly on Shadja (Sa), maintaining the tranquil, devotional twilight character of Kalyan.
               </p>
-           </div>
+            </div>
+          </div>
+
+          {/* Right: Curriculum Playlist */}
+          <div className="lg:w-1/3 p-6 rounded-lg bg-white dark:bg-[#22211F] border border-[#DCD6CC] dark:border-[#2E2D2A] space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#DCD6CC] dark:border-[#2E2D2A]">
+              <div className="flex items-center gap-2">
+                <List size={16} className="text-[#A9232D]" />
+                <h3 className="text-base font-bold text-[#252421] dark:text-[#F2EEE7]">Course Modules</h3>
+              </div>
+              <span className="text-[11px] font-mono text-[#77736D]">12 Lessons</span>
+            </div>
+
+            <div className="space-y-2">
+              {tracks.map((track) => (
+                <div
+                  key={track.number}
+                  onClick={() => setActiveTrack(track.number)}
+                  className={`p-3 rounded border text-xs cursor-pointer transition-colors flex items-center justify-between ${
+                    track.number === activeTrack
+                      ? 'bg-[#EAE5DC] dark:bg-[#171716] border-[#A9232D] ring-1 ring-[#A9232D]'
+                      : 'bg-[#F5F2EC] dark:bg-[#1C1B19] border-[#DCD6CC] dark:border-[#2E2D2A] hover:border-[#77736D]'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                      track.completed ? 'bg-green-700 text-white' : 'bg-[#DCD6CC] dark:bg-[#2E2D2A] text-[#252421] dark:text-[#F2EEE7]'
+                    }`}>
+                      {track.completed ? <Check size={10} /> : track.number}
+                    </span>
+                    <div>
+                      <h5 className="font-semibold text-[#252421] dark:text-[#F2EEE7]">{track.title}</h5>
+                      <span className="text-[10px] font-mono text-[#77736D]">{track.duration}</span>
+                    </div>
+                  </div>
+
+                  {track.number === activeTrack && (
+                    <Play size={12} fill="currentColor" className="text-[#A9232D]" />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setActiveTrack(prev => (prev < 7 ? prev + 1 : 1))}
+              className="w-full mt-4 py-3 rounded bg-[#252421] dark:bg-[#F2EEE7] text-[#F5F2EC] dark:text-[#171716] text-xs font-semibold hover:bg-[#A9232D] dark:hover:bg-[#A9232D] dark:hover:text-white transition-colors"
+            >
+              Next Lesson →
+            </button>
+          </div>
+
         </div>
 
-        {/* Right: Sidebar / Playlist */}
-        <div className="lg:w-1/3 space-y-8">
-           <div className="mughal-card p-8 h-full flex flex-col">
-              <div className="flex items-center gap-3 mb-8">
-                 <List className="text-kesar-gold" size={20} />
-                 <h3 className="text-xl font-display text-ivory">Course Content</h3>
-              </div>
-              
-              <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                 <PlaylistTrack number={1} title="Introduction to Kalyan Thaat" duration="12:40" completed />
-                 <PlaylistTrack number={2} title="Structure of Yaman" duration="18:15" completed />
-                 <PlaylistTrack number={3} title="The Madhyam in Yaman" duration="24:10" completed />
-                 <PlaylistTrack number={4} title="The Intricacies of Rishabh" duration="22:30" active />
-                 <PlaylistTrack number={5} title="Descending Patterns (Taan)" duration="30:05" />
-                 <PlaylistTrack number={6} title="Meend and Oscillations" duration="26:45" />
-                 <PlaylistTrack number={7} title="Tihais in Yaman" duration="15:20" />
-              </div>
-
-              <div className="mt-8 pt-8 border-t border-teak-border/30">
-                 <button className="w-full py-4 grad-cta text-deep-raat font-bold uppercase tracking-widest text-xs rounded-xl shadow-lg shadow-kesar-gold/20">
-                    Next Lesson
-                 </button>
-              </div>
-           </div>
-        </div>
       </div>
     </div>
   );
 };
-
-const PlaylistTrack = ({ number, title, duration, active, completed }: { number: number, title: string, duration: string, active?: boolean, completed?: boolean }) => (
-  <div className={cn(
-    "p-4 rounded-xl border transition-all cursor-pointer group",
-    active ? "bg-kesar-gold/10 border-kesar-gold/50" : "bg-deep-raat border-teak-border/30 hover:border-kesar-gold/30"
-  )}>
-    <div className="flex items-center gap-4">
-      <div className={cn(
-        "w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border",
-        completed ? "bg-kesar-gold border-kesar-gold text-deep-raat" : 
-        active ? "border-kesar-gold text-kesar-gold" : "border-teak-border text-mitti"
-      )}>
-        {completed ? "✓" : number}
-      </div>
-      <div className="flex-1">
-        <h5 className={cn("text-xs font-medium", active ? "text-kesar-gold" : "text-ivory group-hover:text-kesar-gold")}>{title}</h5>
-        <p className="text-[10px] text-mitti mt-1">{duration}</p>
-      </div>
-      {active && <Play size={14} className="text-kesar-gold" />}
-    </div>
-  </div>
-);
-
-import { cn } from '../lib/utils';

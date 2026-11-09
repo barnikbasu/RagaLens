@@ -1,295 +1,641 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Hero } from '../components/layout/Hero';
-import { Waveform } from '../components/audio/Waveform';
-import { TaalCircle } from '../components/audio/TaalCircle';
-import { RagaDetectionCard } from '../components/raga/RagaDetectionCard';
-import { Divider, LotusTile } from '../components/ui/Divider';
-import { MOCK_RAGAS, MOCK_TAALS } from '../lib/ragaData';
-import { motion } from 'motion/react';
-import { 
-  Mic2, 
-  BrainCircuit, 
-  Music2, 
-  ArrowRight, 
-  LayoutGrid
-} from 'lucide-react';
-import { cn } from '../lib/utils';
+import { Play, Volume2, ArrowRight, Search, Mic, Disc, Compass, Sparkles, Check, FileText } from 'lucide-react';
+import { MOCK_RAGAS, Raga } from '../lib/ragaData';
+import { RagaArtwork } from '../components/ui/RagaArtwork';
+import { audioEngine } from '../lib/audioEngine';
 
 export const Home: React.FC = () => {
-  const [isRecording, setIsRecording] = useState(false);
   const navigate = useNavigate();
+  const [isPlayingAroha, setIsPlayingAroha] = useState(false);
+  const [activeSwara, setActiveSwara] = useState<string | null>(null);
+  const [selectedRasa, setSelectedRasa] = useState<string>('Shanti');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  return (
-    <div className="pt-[64px]">
-      <Hero />
+  const featuredRaga = MOCK_RAGAS.find(r => r.id === 'yaman') || MOCK_RAGAS[0];
 
-      {/* Features Strip */}
-      <div className="max-w-7xl mx-auto px-6 py-32">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <FeatureCard 
-              to="/detect"
-              icon={<Mic2 className="text-kesar-gold" size={32} />} 
-              title="Raga Detection" 
-              description="Detect any Raga instantly from humming, singing, or instrumental recordings with absolute precision." 
-            />
-            <FeatureCard 
-              to="/learn"
-              icon={<BrainCircuit className="text-raga-purple" size={32} />} 
-              title="AI Guru" 
-              description="Personalized feedback systems to help you master pitch, meend, and laya through deep analysis." 
-            />
-            <FeatureCard 
-              to="/concert"
-              icon={<Music2 className="text-morpankh" size={32} />} 
-              title="Concert Mode" 
-              description="Transform your stage presence with real-time data visualization and audience engagement tools." 
-            />
-        </div>
-      </div>
+  const handlePlayAroha = async () => {
+    if (isPlayingAroha) return;
+    setIsPlayingAroha(true);
+    const swaras = ["N.", "R", "G", "M", "D", "N", "S'"];
+    for (const s of swaras) {
+      setActiveSwara(s);
+      audioEngine.playSwara(s, 0.85);
+      await new Promise(r => setTimeout(r, 550));
+    }
+    setActiveSwara(null);
+    setIsPlayingAroha(false);
+  };
 
-      <Divider showDiamond={true} />
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/explore?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
-      {/* Raga Detection Demo */}
-      <div className="max-w-7xl mx-auto px-6 py-32">
-        <div className="flex flex-col items-center text-center mb-24">
-            <span className="text-kesar-gold text-[11px] font-bold tracking-[5px] uppercase mb-4">Laboratory</span>
-            <h2 className="text-5xl md:text-7xl font-display leading-[1.1] max-w-3xl">Experience the Intelligence of Raga.</h2>
-        </div>
+  const prahars = [
+    {
+      prahar: '1ST PRAHAR',
+      time: '06:00 - 09:00',
+      raga: 'Bhairav',
+      desc: 'Early Dawn Awaken',
+      notes: 'Komal Re, Dha · Austere',
+      active: false
+    },
+    {
+      prahar: '2ND PRAHAR',
+      time: '09:00 - 12:00',
+      raga: 'Miyan Ki Todi',
+      desc: 'Late Morning Solitude',
+      notes: 'Tivra Ma, Komal Ga · Deep Pathos',
+      active: false
+    },
+    {
+      prahar: '3RD PRAHAR',
+      time: '12:00 - 15:00',
+      raga: 'Bhimpalasi',
+      desc: 'Sun High & Resignation',
+      notes: 'Kafi Thaat · Shringara & Peace',
+      active: false
+    },
+    {
+      prahar: '4TH PRAHAR',
+      time: '18:00 - 21:00',
+      raga: 'Yaman · Purvi',
+      desc: 'Twilight Junction (Sandhi)',
+      notes: 'Optimal Rasa',
+      active: true,
+      badge: 'NOW'
+    },
+    {
+      prahar: '5TH PRAHAR',
+      time: '21:00 - 00:00',
+      raga: 'Darbari Kanada',
+      desc: 'Midnight Royal Gravity',
+      notes: 'Slow Andolan on Ga & Dha · Majesty',
+      active: false
+    },
+    {
+      prahar: '6TH PRAHAR',
+      time: '00:00 - 03:00',
+      raga: 'Malkauns',
+      desc: 'Deep Inward Trance',
+      notes: 'Pentatonic Audav · Meditative',
+      active: false
+    }
+  ];
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
-            {/* Left Column: Input */}
-            <div className="space-y-10">
-                <div onClick={() => setIsRecording(!isRecording)} className="cursor-pointer">
-                <Waveform isRecording={isRecording} />
-                </div>
-                <div 
-                  onClick={() => navigate('/detect')}
-                  className="mughal-card p-12 border-dashed border-2 flex flex-col items-center justify-center border-teak-border hover:border-kesar-gold/50 transition-all cursor-pointer group"
-                >
-                  <div className="w-16 h-16 rounded-full bg-deep-raat flex items-center justify-center border border-teak-border mb-6 group-hover:scale-110 transition-transform">
-                      <LayoutGrid className="text-mitti group-hover:text-kesar-gold transition-colors" size={24} />
-                  </div>
-                  <p className="text-ivory font-display text-lg">Upload Archive</p>
-                  <p className="text-[13px] text-mitti mt-2">Drop your .mp3 or .wav files for instant deep analysis</p>
-                </div>
-            </div>
-
-            {/* Right Column: Output */}
-            <div className="space-y-10">
-                <RagaDetectionCard raga={MOCK_RAGAS[0]} confidence={92.4} />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="transform md:scale-105 origin-left">
-                    <TaalCircle taal={MOCK_TAALS[0]} isPlaying={isRecording} />
-                </div>
-                <div className="mughal-card p-8 flex flex-col justify-between gap-6 border-l-4 border-l-kesar-gold">
-                    <div className="space-y-1">
-                        <span className="text-[11px] font-bold tracking-[2px] uppercase text-kesar-gold">AI Insights</span>
-                        <h4 className="text-ivory font-display text-lg">Performance Score</h4>
-                    </div>
-                    
-                    <div className="space-y-4">
-                        <div className="bg-deep-raat/50 p-4 rounded-lg border border-teak-border/40">
-                            <span className="text-[10px] uppercase font-bold text-morpankh">Stability</span>
-                            <p className="text-xs text-sandstone mt-1 leading-relaxed">Gandhar (G) resonance is at 98%. Your microtonal consistency is exceptional today.</p>
-                        </div>
-                        <div className="bg-deep-raat/50 p-4 rounded-lg border border-teak-border/40">
-                            <span className="text-[10px] uppercase font-bold text-sindoor">Correction</span>
-                            <p className="text-xs text-sandstone mt-1 leading-relaxed">Check the transition from M̃ to D. There's a 12-cent deviation from the ideal shruti.</p>
-                        </div>
-                    </div>
-
-                    <button 
-                      onClick={() => navigate('/detect')}
-                      className="w-full py-3 text-[11px] font-bold uppercase tracking-[2px] border border-teak-border hover:border-kesar-gold text-mitti hover:text-kesar-gold transition-all"
-                    >
-                        Full Analysis Report
-                    </button>
-                </div>
-                </div>
-            </div>
-        </div>
-      </div>
-
-      <Divider showDiamond={true} />
-
-      {/* Editorial / Feature Section */}
-      <section className="max-w-7xl mx-auto px-6 py-40">
-        <div className="flex flex-col lg:flex-row gap-20">
-            <div className="lg:w-1/3">
-                <motion.div 
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="sticky top-32"
-                >
-                <span className="text-kesar-gold text-[10px] font-bold tracking-[8px] uppercase mb-8 block">Depth & Detail</span>
-                <h3 className="text-5xl font-display leading-[1.1] mb-8">The Architecture of Silence.</h3>
-                <p className="text-mitti text-sm leading-relaxed mb-10">
-                    Indian Classical Music is not just about sound; it is about the spaces between. Our AI understands the silence as much as the swaras.
-                </p>
-                <div className="h-[1px] w-12 bg-kesar-gold mb-10" />
-                <div className="flex flex-col gap-8">
-                    <div className="flex gap-4">
-                        <span className="text-ivory font-display text-4xl">22</span>
-                        <p className="text-[11px] text-mitti uppercase tracking-wider">Shrutis detected in real-time performance.</p>
-                    </div>
-                    <div className="flex gap-4">
-                        <span className="text-ivory font-display text-4xl">∞</span>
-                        <p className="text-[11px] text-mitti uppercase tracking-wider">Possibilities in every improvisation.</p>
-                    </div>
-                </div>
-                </motion.div>
-            </div>
-            
-            <div className="lg:w-2/3 space-y-32">
-                <motion.div 
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="relative"
-                >
-                <div className="aspect-[16/9] mughal-card group overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-deep-raat via-transparent to-transparent z-10" />
-                    <div className="absolute inset-0 lotus-pattern opacity-10 group-hover:scale-110 transition-transform duration-1000" />
-                    <img 
-                    src="https://images.unsplash.com/photo-1514525253361-aa3729e8838d?auto=format&fit=crop&q=80&w=2670" 
-                    alt="Tabla Performance" 
-                    className="w-full h-full object-cover grayscale opacity-50 contrast-125"
-                    />
-                    <div className="absolute bottom-12 left-12 z-20 max-w-lg">
-                        <h4 className="text-3xl font-display text-ivory mb-4 leading-tight">Mastering the Meend: The Glissando of the Soul.</h4>
-                        <p className="text-sandstone text-sm leading-relaxed">
-                        Discover how our neural networks trace the continuous pitch curves of the sitar with unprecedented accuracy.
-                        </p>
-                    </div>
-                </div>
-                </motion.div>
-
-                <div className="border-l border-teak-border pl-12 py-4">
-                    <p className="text-3xl font-display text-ivory/80 leading-relaxed italic">
-                    "Music is the movement of sound to reach the soul for the education of its virtue."
-                    </p>
-                    <div className="mt-6 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-teak-border overflow-hidden grayscale">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" referrerPolicy="no-referrer" alt="Portrait" />
-                    </div>
-                    <div>
-                        <p className="text-xs font-bold text-kesar-gold uppercase tracking-widest">A.R. Rahman</p>
-                        <p className="text-[10px] text-mitti uppercase">Composer</p>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-      </section>
-
-      <Divider showDiamond={true} />
-
-      {/* Tools Grid Section */}
-      <div className="max-w-7xl mx-auto px-6 py-32">
-        <div className="flex flex-col lg:flex-row justify-between items-baseline mb-20 gap-8">
-            <div className="max-w-2xl">
-            <span className="text-kesar-gold text-[11px] font-bold tracking-[5px] uppercase mb-4 block">The Toolkit</span>
-            <h2 className="text-5xl md:text-7xl font-display leading-[0.9]">Everything for the <span className="text-kesar-gold italic">Riyaz.</span></h2>
-            </div>
-            <div className="flex flex-wrap gap-3">
-                {['Daily Practice', 'Tabla & Laya', 'AI Maestro', 'Future Tools'].map((tab, i) => (
-                <button 
-                  key={tab} 
-                  onClick={() => navigate('/toolkit')}
-                  className={cn(
-                    "px-8 py-3 border rounded-full text-[12px] font-bold uppercase tracking-[1px] transition-all",
-                    i === 0 ? "bg-kesar-gold text-deep-raat border-kesar-gold" : "border-teak-border text-mitti hover:border-kesar-gold hover:text-kesar-gold"
-                )}>
-                {tab}
-                </button>
-                ))}
-            </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <ToolCard 
-              onClick={() => navigate('/toolkit')}
-              category="Gold" title="Smart Tanpura" description="Studio-quality drones that adapt to your vocal texture and resonance." 
-            />
-            <ToolCard 
-              onClick={() => navigate('/toolkit')}
-              category="Teal" title="Laya Calculator" description="Compute matras, vibhaags, and precise tihai points for complex taals." 
-            />
-            <ToolCard 
-              onClick={() => navigate('/toolkit')}
-              category="Crimson" title="Bol Trainer" description="Visual bol guide with AI-assisted pronunciation and rhythmic timing." 
-            />
-            <ToolCard 
-              onClick={() => navigate('/toolkit')}
-              category="Purple" title="Swara Galaxy" description="An interactive 3D visualization of raga relationships and hierarchies." 
-            />
-            <ToolCard 
-              onClick={() => navigate('/toolkit')}
-              category="Gold" title="Shruti Map" description="Map all 22 shrutis with microtonal precision during performance." 
-            />
-            <ToolCard 
-              onClick={() => navigate('/toolkit')}
-              category="Teal" title="Metronome Pro" description="Advanced tala grid with customizable human-feel swing and accents." 
-            />
-            <ToolCard 
-              onClick={() => navigate('/toolkit')}
-              category="Crimson" title="Tihai Builder" description="One-tap generation of tihais based on any current beat and speed." 
-            />
-            <ToolCard 
-              onClick={() => navigate('/toolkit')}
-              category="Purple" title="Resonance Lab" description="Deep analysis of your voice harmonics and resonance chamber quality." 
-            />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-function FeatureCard({ icon, title, description, to }: { icon: React.ReactNode, title: string, description: string, to: string }) {
-  return (
-    <Link to={to} className="block group">
-      <motion.div 
-        whileHover={{ y: -8 }}
-        className="mughal-card p-10 cursor-pointer h-full"
-      >
-        <div className="mb-6 p-4 rounded-2xl bg-deep-raat w-fit border border-teak-border group-hover:scale-110 transition-transform duration-500">
-          {icon}
-        </div>
-        <h3 className="text-2xl font-display mb-4">{title}</h3>
-        <p className="text-sandstone leading-relaxed text-[15px]">{description}</p>
-        <div className="mt-8 flex items-center gap-2 text-kesar-gold font-bold text-xs uppercase tracking-widest cursor-pointer group/link">
-          Explore Feature <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-        </div>
-      </motion.div>
-    </Link>
-  );
-}
-
-function ToolCard({ category, title, description, onClick }: { category: 'Gold' | 'Teal' | 'Crimson' | 'Purple', title: string, description: string, onClick?: () => void }) {
-  const colors = {
-    Gold: 'border-kesar-gold',
-    Teal: 'border-morpankh',
-    Crimson: 'border-sindoor',
-    Purple: 'border-raga-purple'
+  const rasaCards: Record<string, { raga: string; thaat: string; subtitle: string; desc: string; master: string }[]> = {
+    'Shanti': [
+      {
+        raga: 'Malkauns',
+        thaat: 'BHAIRAVI THAAT',
+        subtitle: 'Universal Shanti',
+        desc: 'Devoid of Rishabh and Pancham, Malkauns draws its quiet power from the intense oscillation of Komal Gandhar and Komal Dhaivat, inducing an unshakeable inner calm.',
+        master: 'Ustad Amir Khan'
+      },
+      {
+        raga: 'Bageshri',
+        thaat: 'KHAMAJ THAAT',
+        subtitle: 'Serene Contemplation',
+        desc: 'Depicting the lover waiting patiently in deep stillness. The gliding transitions (meend) from Madhyam to Dhaivat capture delicate balance between longing and tranquility.',
+        master: 'Pt. Kumar Gandharva'
+      },
+      {
+        raga: 'Ahir Bhairav',
+        thaat: 'BHAIRAV THAAT',
+        subtitle: 'Prabhat Transcendence',
+        desc: 'A hybrid morning masterpiece combining the solemnity of Bhairav with the sweetness of Kafi. Restores equilibrium to the waking mind at daybreak.',
+        master: 'Pt. Hariprasad Chaurasia'
+      }
+    ],
+    'Shringara': [
+      {
+        raga: 'Yaman',
+        thaat: 'KALYAN THAAT',
+        subtitle: 'Lover’s Twilight',
+        desc: 'The grand sovereign of dusk, celebrating the anticipation of meeting the beloved under evening lamps.',
+        master: 'Vidushi Kishori Amonkar'
+      },
+      {
+        raga: 'Khamaj',
+        thaat: 'KHAMAJ THAAT',
+        subtitle: 'Playful Romance',
+        desc: 'Sweet, lyric-centered melodies immortalized in classical Thumri and Dadra.',
+        master: 'Ustad Bade Ghulam Ali Khan'
+      },
+      {
+        raga: 'Pilu',
+        thaat: 'KHAMAJ THAAT',
+        subtitle: 'Pastoral Tenderness',
+        desc: 'Touches all twelve semitones in lighter classical expressions with folk intimacy.',
+        master: 'Pt. Shivkumar Sharma'
+      }
+    ],
+    'Veera': [
+      {
+        raga: 'Darbari Kanada',
+        thaat: 'ASAVARI THAAT',
+        subtitle: 'Imperial Valor & Majesty',
+        desc: 'Endowed with slow, unhurried, royal authority designed for Mughal darbars.',
+        master: 'Ustad Vilayat Khan'
+      },
+      {
+        raga: 'Shankara',
+        thaat: 'BILAWAL THAAT',
+        subtitle: 'Cosmic Strength',
+        desc: 'Fiery, abrupt zigzag ascents invoking Lord Shiva’s cosmic dance.',
+        master: 'Pt. Mallikarjun Mansur'
+      },
+      {
+        raga: 'Kedar',
+        thaat: 'KALYAN THAAT',
+        subtitle: 'Noble Elevation',
+        desc: 'Complex twisted phrases demanding tremendous lung capacity and mental focus.',
+        master: 'Pt. Bhimsen Joshi'
+      }
+    ],
+    'Karuna': [
+      {
+        raga: 'Bhimpalasi',
+        thaat: 'KAFI THAAT',
+        subtitle: 'Viraha Longing',
+        desc: 'The poignant ache of separation sung during the quiet fading hours of late afternoon.',
+        master: 'Pt. Mallikarjun Mansur'
+      },
+      {
+        raga: 'Miyan Ki Todi',
+        thaat: 'TODI THAAT',
+        subtitle: 'Heartbroken Austerity',
+        desc: 'Piercing microtones that evoke forest solitude and total surrender.',
+        master: 'Pt. Bhimsen Joshi'
+      },
+      {
+        raga: 'Jogiya',
+        thaat: 'BHAIRAV THAAT',
+        subtitle: 'Ascetic Pity',
+        desc: 'Sung by wandering mendicants, capturing pure tears of devotion.',
+        master: 'Dr. Prabha Atre'
+      }
+    ],
+    'Bhakti': [
+      {
+        raga: 'Bhairavi',
+        thaat: 'BHAIRAVI THAAT',
+        subtitle: 'Divine Mother',
+        desc: 'The concluding sanctuary of Indian classical music, dissolving all dualities.',
+        master: 'Ustad Bismillah Khan'
+      },
+      {
+        raga: 'Ahir Bhairav',
+        thaat: 'BHAIRAV THAAT',
+        subtitle: 'Morning Prayer',
+        desc: 'Temple bells and sanctum peace at the breaking of dawn.',
+        master: 'Pt. Hariprasad Chaurasia'
+      },
+      {
+        raga: 'Brindavani Sarang',
+        thaat: 'KAFI THAAT',
+        subtitle: 'Pastoral Worship',
+        desc: 'Clear midday devotion celebrating the flute of Krishna in holy Vrindavan.',
+        master: 'Pt. Nikhil Banerjee'
+      }
+    ]
   };
 
   return (
-    <motion.div 
-      whileHover={{ y: -4 }}
-      onClick={onClick}
-      className="mughal-card p-5 group flex flex-col hover:border-kesar-gold transition-colors duration-300 cursor-pointer"
-    >
-      <div className="flex items-start gap-4 h-full">
-         <div className={cn("w-1 self-stretch rounded-full", colors[category])} style={{ 
-           backgroundColor: category === 'Gold' ? '#C9A227' : category === 'Teal' ? '#1A7F7A' : category === 'Crimson' ? '#8B0000' : '#6B3FA0' 
-         }} />
-         <div className="flex-1">
-            <h4 className="text-ivory font-bold text-sm mb-1 group-hover:text-kesar-gold transition-colors">{title}</h4>
-            <p className="text-mitti text-[11px] leading-relaxed line-clamp-3">{description}</p>
-         </div>
-      </div>
-    </motion.div>
+    <div className="w-full bg-[#F5F2EC] dark:bg-[#171716] min-h-screen text-[#252421] dark:text-[#F2EEE7] transition-colors">
+      
+      {/* Hero Section (Matching Reference Image 2: "Every raga has a world.") */}
+      <section className="pt-10 pb-16 px-6 max-w-7xl mx-auto space-y-8">
+        
+        {/* Editorial Eyebrow */}
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#A9232D]" />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-[#77736D]">
+            ARCHIVE EDITION VOL. IV · Sangeet Shastra Corpus
+          </span>
+        </div>
+
+        {/* Massive Headline */}
+        <div className="space-y-4 max-w-4xl">
+          <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-[#252421] dark:text-[#F2EEE7] leading-[1.05]">
+            Every raga has a world<span className="text-[#A9232D]">.</span>
+          </h1>
+          <p className="text-sm md:text-base text-[#77736D] leading-relaxed max-w-2xl font-normal">
+            Explore the melodies, traditions, artists and ideas that shape Indian classical music through archival recordings, visual ragamala art, and computational acoustics.
+          </p>
+        </div>
+
+        {/* Global Search Bar */}
+        <form onSubmit={handleSearchSubmit} className="max-w-2xl">
+          <div className="flex items-center gap-3 p-2 bg-white dark:bg-[#22211F] rounded-lg border border-[#DCD6CC] dark:border-[#2E2D2A] shadow-sm">
+            <Search size={18} className="text-[#77736D] ml-2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by raga, thaat, swara set (e.g. S R G)"
+              className="flex-1 bg-transparent text-xs md:text-sm text-[#252421] dark:text-[#F2EEE7] placeholder-[#77736D] focus:outline-none"
+            />
+            <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-[#77736D] pr-2">
+              <span className="text-[10px] uppercase font-bold tracking-wider">quick:</span>
+              {['Yaman', 'Darbari', 'Bhairav', 'Megh'].map(q => (
+                <button
+                  type="button"
+                  key={q}
+                  onClick={() => setSearchQuery(q)}
+                  className="px-2 py-0.5 rounded bg-[#EAE5DC] dark:bg-[#2E2D2A] text-[#252421] dark:text-[#F2EEE7] hover:border-[#A9232D] border border-transparent transition-colors"
+                >
+                  {q}
+                </button>
+              ))}
+              <kbd className="text-[10px] bg-[#EAE5DC] dark:bg-[#2E2D2A] px-1.5 py-0.5 rounded font-mono">
+                ⌘K
+              </kbd>
+            </div>
+          </div>
+        </form>
+
+        {/* Daily Selection Featured Raga (Plate No. 042 - Yaman) */}
+        <div className="pt-8">
+          <div className="p-6 md:p-10 rounded-xl bg-white dark:bg-[#22211F] border border-[#DCD6CC] dark:border-[#2E2D2A] grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            {/* Left: Plate 042 Ragamala Canvas */}
+            <div className="lg:col-span-6 space-y-3">
+              <div className="flex items-center justify-between text-[11px] font-bold tracking-widest uppercase text-[#77736D]">
+                <span>PLATE NO. 042 · RAGAMALA INTERPRETATION</span>
+                <span className="text-[#A9232D] flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A9232D]" />
+                  DAILY SELECTION
+                </span>
+              </div>
+
+              {/* Museum Ivory Frame */}
+              <div className="p-3 bg-[#EAE5DC] dark:bg-[#171716] rounded-lg border border-[#DCD6CC] dark:border-[#2E2D2A]">
+                <div className="rounded overflow-hidden border border-[#DCD6CC] dark:border-[#2E2D2A] bg-[#F5F2EC] h-64 md:h-80">
+                  <RagaArtwork raga={featuredRaga} className="w-full h-full" />
+                </div>
+              </div>
+
+              <p className="text-[11px] text-[#77736D] italic">
+                Medium: Hand-ground pigment & 24k gold dust on Khadi rag paper · Archival Collection · Sangeet Natak
+              </p>
+            </div>
+
+            {/* Right: Raga Grammar, Swaras, and Audio Exegesis */}
+            <div className="lg:col-span-6 space-y-6">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#77736D]">
+                  EVENING SANDHIPRAKASH · AUDAV-SAMPURNA
+                </span>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-[#252421] dark:text-[#F2EEE7] mt-1">
+                  {featuredRaga.name}
+                </h2>
+                <p className="text-xs md:text-sm text-[#77736D] leading-relaxed mt-3">
+                  {featuredRaga.description}
+                </p>
+              </div>
+
+              {/* Aroha / Avaroha Grammar Table */}
+              <div className="p-4 rounded-lg bg-[#F5F2EC] dark:bg-[#171716] border border-[#DCD6CC] dark:border-[#2E2D2A] space-y-3">
+                <div className="flex items-center justify-between text-[11px] text-[#77736D]">
+                  <span className="font-bold uppercase tracking-wider">Aroha / Avaroha Grammar</span>
+                  <span className="text-[#A9232D] font-bold">Tivra Ma (M')</span>
+                </div>
+
+                <div className="flex items-center gap-3 text-sm font-semibold tracking-wider flex-wrap">
+                  {['Ṇ', 'R', 'G', "M'", 'D', 'N', 'Ṡ'].map((s, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => audioEngine.playSwara(s, 0.9)}
+                      className={`px-2.5 py-1 rounded transition-all text-xs ${
+                        s.includes("M'") 
+                          ? 'text-[#A9232D] font-bold bg-[#A9232D]/10' 
+                          : 'text-[#252421] dark:text-[#F2EEE7] hover:bg-white dark:hover:bg-[#22211F]'
+                      } ${activeSwara === s ? 'ring-2 ring-[#A9232D] scale-110' : ''}`}
+                      title={`Audition swara ${s}`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="pt-2 border-t border-[#DCD6CC] dark:border-[#2E2D2A] flex items-center justify-between text-[11px] text-[#77736D]">
+                  <span>Vadi: <strong className="text-[#252421] dark:text-[#F2EEE7]">Ga (300Hz)</strong></span>
+                  <span>Samvadi: <strong className="text-[#252421] dark:text-[#F2EEE7]">Ni (450Hz)</strong></span>
+                  <span>Thaat: <strong className="text-[#252421] dark:text-[#F2EEE7]">Kalyan</strong></span>
+                </div>
+              </div>
+
+              {/* Audio Player Component */}
+              <div className="p-3 rounded-lg bg-white dark:bg-[#171716] border border-[#DCD6CC] dark:border-[#2E2D2A] flex items-center justify-between gap-4">
+                <button
+                  onClick={handlePlayAroha}
+                  disabled={isPlayingAroha}
+                  className="flex items-center gap-3 text-left flex-1"
+                >
+                  <div className={`w-9 h-9 rounded-full bg-[#A9232D] text-white flex items-center justify-center transition-transform ${isPlayingAroha ? 'scale-105' : 'hover:scale-105'}`}>
+                    <Play size={15} fill="currentColor" className="ml-0.5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-[#252421] dark:text-[#F2EEE7] block">
+                      Aroha & Pakad Vistar
+                    </span>
+                    <span className="text-[11px] text-[#77736D]">
+                      {isPlayingAroha ? 'Synthesizing Swaras...' : 'Pt. Nikhil Banerjee · 0:48'}
+                    </span>
+                  </div>
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => navigate(`/raga/${featuredRaga.id}`)}
+                    className="px-3 py-1.5 rounded border border-[#DCD6CC] dark:border-[#2E2D2A] text-xs font-semibold text-[#252421] dark:text-[#F2EEE7] hover:bg-[#EAE5DC] dark:hover:bg-[#2E2D2A] transition-colors"
+                  >
+                    Notation Sheet
+                  </button>
+                </div>
+              </div>
+
+              {/* Bottom Quick Link */}
+              <div className="flex items-center justify-between text-xs text-[#77736D]">
+                <span>Recommended Listening: 18:00 – 21:00</span>
+                <Link
+                  to={`/explore?thaat=Kalyan`}
+                  className="text-[#A9232D] font-semibold hover:underline flex items-center gap-1"
+                >
+                  <span>Explore Kalyan Thaat</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      {/* Temporal Resonance: Time & The Raga (Matching Reference Image 2) */}
+      <section className="py-16 bg-[#EAE5DC] dark:bg-[#171716] border-y border-[#DCD6CC] dark:border-[#2E2D2A] px-6 transition-colors">
+        <div className="max-w-7xl mx-auto space-y-10">
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-2 max-w-2xl">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#A9232D]" />
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#77736D]">
+                  THE ASHTA PRAHAR CYCLE
+                </span>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#252421] dark:text-[#F2EEE7]">
+                Temporal Resonance: Time & The Raga
+              </h2>
+              <p className="text-xs md:text-sm text-[#77736D] leading-relaxed">
+                Indian classical music aligns microtonal structures with circadian biorhythms. Each raga flowers in its consecrated three-hour watch (prahar) of the sun and stars.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#A9232D] bg-white dark:bg-[#22211F] px-3.5 py-1.5 rounded border border-[#DCD6CC] dark:border-[#2E2D2A]">
+              <span className="w-2 h-2 rounded-full bg-[#A9232D] animate-ping" />
+              <span>ACTIVE PRAHAR: Sandhiprakash (Dusk)</span>
+            </div>
+          </div>
+
+          {/* 6 Prahar Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+            {prahars.map((p, idx) => (
+              <div
+                key={idx}
+                onClick={() => navigate(`/explore?prahar=${idx + 1}`)}
+                className={`p-4 rounded-lg border transition-all cursor-pointer flex flex-col justify-between space-y-4 ${
+                  p.active
+                    ? 'bg-white dark:bg-[#22211F] border-[#A9232D] shadow-md ring-1 ring-[#A9232D]'
+                    : 'bg-[#F5F2EC] dark:bg-[#1C1B19] border-[#DCD6CC] dark:border-[#2E2D2A] hover:border-[#252421]'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between text-[10px] font-mono text-[#77736D]">
+                    <span>{p.prahar}</span>
+                    {p.badge && (
+                      <span className="text-[9px] font-bold bg-[#A9232D] text-white px-1.5 py-0.2 rounded">
+                        ● {p.badge}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[11px] font-mono text-[#77736D] block mt-0.5">{p.time}</span>
+                  
+                  <h3 className="font-bold text-sm md:text-base text-[#252421] dark:text-[#F2EEE7] mt-3">
+                    {p.raga}
+                  </h3>
+                  <p className="text-[11px] text-[#77736D] mt-1">{p.desc}</p>
+                </div>
+
+                <div className="pt-3 border-t border-[#DCD6CC] dark:border-[#2E2D2A] text-[10px] text-[#77736D]">
+                  {p.notes}
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* The Navarasa Spectrum (Matching Reference Image 2) */}
+      <section className="py-16 px-6 max-w-7xl mx-auto space-y-10">
+        
+        <div className="space-y-2 max-w-3xl">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#A9232D]" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#77736D]">
+              AESTHETIC FRAMEWORK
+            </span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#252421] dark:text-[#F2EEE7]">
+            The Navarasa Spectrum
+          </h2>
+          <p className="text-xs md:text-sm text-[#77736D] leading-relaxed">
+            A raga does not convey vague sentiment; it targets precise emotional currents formulated in Bharata Muni's Natyashastra. Select a rasa to explore its tonal archetypes.
+          </p>
+        </div>
+
+        {/* Rasa Filter Tabs */}
+        <div className="flex flex-wrap gap-2">
+          {[
+            { id: 'Shanti', label: 'Shanti · Peace' },
+            { id: 'Shringara', label: 'Shringara · Love & Longing' },
+            { id: 'Veera', label: 'Veera · Valor & Majesty' },
+            { id: 'Karuna', label: 'Karuna · Pathos & Compassion' },
+            { id: 'Bhakti', label: 'Bhakti · Devotion' }
+          ].map(r => (
+            <button
+              key={r.id}
+              onClick={() => setSelectedRasa(r.id)}
+              className={`px-4 py-2 rounded text-xs transition-colors ${
+                selectedRasa === r.id
+                  ? 'bg-[#252421] dark:bg-[#F2EEE7] text-[#F5F2EC] dark:text-[#171716] font-semibold'
+                  : 'bg-[#EAE5DC] dark:bg-[#22211F] text-[#77736D] hover:text-[#252421] dark:hover:text-[#F2EEE7]'
+              }`}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 3 Rasa Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {(rasaCards[selectedRasa] || rasaCards['Shanti']).map((card, idx) => (
+            <div
+              key={idx}
+              onClick={() => navigate(`/explore?q=${encodeURIComponent(card.raga)}`)}
+              className="p-6 rounded-lg bg-white dark:bg-[#22211F] border border-[#DCD6CC] dark:border-[#2E2D2A] hover:border-[#A9232D] transition-all cursor-pointer flex flex-col justify-between space-y-4 group"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#77736D]">
+                  <span>{card.thaat}</span>
+                  <span className="text-[#A9232D]">{card.subtitle}</span>
+                </div>
+                <h3 className="text-2xl font-bold text-[#252421] dark:text-[#F2EEE7] group-hover:text-[#A9232D] transition-colors">
+                  {card.raga}
+                </h3>
+                <p className="text-xs text-[#77736D] leading-relaxed pt-1">
+                  {card.desc}
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-[#DCD6CC] dark:border-[#2E2D2A] flex items-center justify-between text-xs text-[#77736D]">
+                <span>Key Archival Master: {card.master}</span>
+                <ArrowRight size={13} className="text-[#77736D] group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </section>
+
+      {/* Master Heritage Quote & Lineages (Matching Reference Image 2: Ustad Amir Khan) */}
+      <section className="py-16 bg-[#EAE5DC] dark:bg-[#171716] border-y border-[#DCD6CC] dark:border-[#2E2D2A] px-6 transition-colors">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          
+          {/* Left: Vintage Sepia/Graphite Portrait */}
+          <div className="lg:col-span-5 flex flex-col items-center p-6 bg-[#F5F2EC] dark:bg-[#22211F] rounded-lg border border-[#DCD6CC] dark:border-[#2E2D2A]">
+            <img
+              src="/public/assets/aistudio/image_c298b7eb.png"
+              alt="Ustad Amir Khan"
+              className="w-64 h-80 object-cover rounded grayscale contrast-125 border border-[#DCD6CC] dark:border-[#2E2D2A]"
+            />
+            <div className="mt-4 text-center">
+              <h3 className="font-bold text-base text-[#252421] dark:text-[#F2EEE7]">Ustad Amir Khan</h3>
+              <p className="text-xs text-[#77736D]">1912 – 1974 · Founder, Indore Gharana</p>
+              <span className="text-[10px] font-mono text-[#A9232D] font-bold block mt-1">
+                Ati Vilambit Pioneer
+              </span>
+            </div>
+          </div>
+
+          {/* Right: The Living Entity Philosophy */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#A9232D]" />
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#77736D]">
+                PHILOSOPHY OF SWARA
+              </span>
+            </div>
+
+            <blockquote className="text-2xl md:text-4xl font-bold tracking-tight text-[#252421] dark:text-[#F2EEE7] leading-tight">
+              “The raga is not merely a scale, but a living entity. It demands patience, surrender, and a lifelong pursuit of the perfect note.”
+            </blockquote>
+
+            <p className="text-xs md:text-sm text-[#77736D] leading-relaxed">
+              Through the Guru-Shishya Parampara, master musicians have preserved oral notations and microtonal nuances across centuries. Each Gharana represents an idiosyncratic aesthetic syntax, breath discipline, and architecture of improvisation.
+            </p>
+
+            {/* Lineages Mini Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+              {[
+                { name: 'Kirana', detail: 'Swara purity · Abdul Karim Khan' },
+                { name: 'Gwalior', detail: 'Oldest Lineage · Robust Bandish' },
+                { name: 'Agra', detail: 'Nom-Tom Alap · Faiyaz Khan' },
+                { name: 'Patiala', detail: 'Intricate Taans · Bade Ghulam Ali' },
+                { name: 'Maihar', detail: 'Sitar & Sarod · Allauddin Khan' },
+                { name: 'Indore', detail: 'Contemplative Merukhand' }
+              ].map((g, idx) => (
+                <div key={idx} className="p-3 bg-white dark:bg-[#22211F] rounded border border-[#DCD6CC] dark:border-[#2E2D2A] text-xs space-y-0.5">
+                  <span className="font-bold text-[#252421] dark:text-[#F2EEE7] block">{g.name}</span>
+                  <span className="text-[10px] text-[#77736D] leading-tight block">{g.detail}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-4 flex flex-wrap items-center gap-6 text-xs font-semibold">
+              <Link
+                to="/artists"
+                className="px-5 py-2.5 rounded bg-[#252421] dark:bg-[#F2EEE7] text-[#F5F2EC] dark:text-[#171716] hover:bg-[#A9232D] dark:hover:bg-[#A9232D] dark:hover:text-white transition-colors"
+              >
+                Browse 450+ Master Lineages ↗
+              </Link>
+              <Link
+                to="/archive"
+                className="text-[#252421] dark:text-[#F2EEE7] hover:text-[#A9232D] transition-colors"
+              >
+                Listen to Historic 78 RPM Transfers →
+              </Link>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Acoustic Intelligence Studio Banner (Matching Reference Image 2: "Listen closer.") */}
+      <section className="py-16 px-6 max-w-7xl mx-auto">
+        <div className="p-8 md:p-12 rounded-xl bg-white dark:bg-[#22211F] border border-[#DCD6CC] dark:border-[#2E2D2A] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <div className="lg:col-span-8 space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#A9232D]" />
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#77736D]">
+                COMPUTATIONAL MUSICOLOGY ENGINE
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#252421] dark:text-[#F2EEE7]">
+              Listen closer. Identify pitch contours and raga grammar in real time.
+            </h2>
+            <p className="text-xs md:text-sm text-[#77736D] leading-relaxed max-w-2xl">
+              Upload an audio passage, hum a melody, or stream from a concert. Our acoustic analysis identifies tonic (Sa) alignment, Pakad melodic movements, and predicts likely raga candidates with probabilistic confidence.
+            </p>
+          </div>
+
+          <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
+            <div className="p-3 rounded bg-[#F5F2EC] dark:bg-[#171716] border border-[#DCD6CC] dark:border-[#2E2D2A] text-xs text-[#77736D] flex items-center gap-3">
+              <Mic size={18} className="text-[#A9232D]" />
+              <div>
+                <span className="font-semibold text-[#252421] dark:text-[#F2EEE7] block">Microphone or Audio File</span>
+                <span className="text-[10px]">WAV, FLAC, MP3 supported</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => navigate('/detect')}
+              className="px-6 py-3.5 rounded bg-[#A9232D] text-white text-xs font-semibold hover:bg-[#8D1C24] transition-all flex items-center justify-center gap-2 shadow-sm"
+            >
+              <span>Open AI Detection Studio</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
+
+        </div>
+
+        {/* Archival Partners Citation */}
+        <div className="mt-8 pt-6 border-t border-[#DCD6CC] dark:border-[#2E2D2A] flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-[#77736D]">
+          <p>
+            <strong className="text-[#252421] dark:text-[#F2EEE7]">ARCHIVAL & ACADEMIC PARTNERS:</strong> CompMusic MTG (Universitat Pompeu Fabra) · ITC Sangeet Research Academy · Saraga Open Music Corpus
+          </p>
+          <span className="text-[10px] font-mono">
+            Open Research License · CC BY-NC 4.0
+          </span>
+        </div>
+      </section>
+
+    </div>
   );
-}
+};
