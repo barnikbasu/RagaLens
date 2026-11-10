@@ -9,9 +9,8 @@ export const Explore: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
-  const [selectedTradition, setSelectedTradition] = useState<MusicalTradition | 'All'>('All');
-  const [selectedPhrase, setSelectedPhrase] = useState<string[]>(['N.', 'R', 'G']);
   const [selectedThaat, setSelectedThaat] = useState<string>('All');
+  const [selectedPhrase, setSelectedPhrase] = useState<string[]>(['N.', 'R', 'G']);
   const [selectedPrahar, setSelectedPrahar] = useState<string>('All');
   const [selectedRasa, setSelectedRasa] = useState<string>('All');
   const [selectedJati, setSelectedJati] = useState<string>('All');
@@ -24,8 +23,8 @@ export const Explore: React.FC = () => {
   const [selectedForCompare, setSelectedForCompare] = useState<string[]>(['darbari', 'megh']);
   const [showComparisonModal, setShowComparisonModal] = useState(false);
 
-  // 12 Semitones Matrix for Swara Search
-  const swaraButtons = [
+  // 12-Sargam Hindustani Swara Matrix
+  const activeSwaraMatrix = [
     { token: 'S', name: 'Shadja', label: 'S' },
     { token: 'r', name: 'Komal Re', label: 'r' },
     { token: 'R', name: 'Shuddha Re', label: 'R' },
@@ -69,9 +68,6 @@ export const Explore: React.FC = () => {
   // Filtering Logic
   const filteredRagas = useMemo(() => {
     return MOCK_RAGAS.filter(raga => {
-      // Tradition filter
-      const matchesTradition = selectedTradition === 'All' || raga.tradition === selectedTradition || raga.tradition === 'Both';
-
       // Thaat filter
       const matchesThaat = selectedThaat === 'All' || raga.thaat.toLowerCase().includes(selectedThaat.toLowerCase());
 
@@ -101,9 +97,9 @@ export const Explore: React.FC = () => {
         return raga.swaraList.some(s => s.replace(/['\.]/g, '') === clean);
       });
 
-      return matchesTradition && matchesThaat && matchesPrahar && matchesRasa && matchesJati && matchesSearch && matchesPhrase;
+      return matchesThaat && matchesPrahar && matchesRasa && matchesJati && matchesSearch && matchesPhrase;
     });
-  }, [selectedTradition, selectedThaat, selectedPrahar, selectedRasa, selectedJati, searchQuery, selectedPhrase]);
+  }, [selectedThaat, selectedPrahar, selectedRasa, selectedJati, searchQuery, selectedPhrase]);
 
   const handlePlayPakad = async (e: React.MouseEvent, raga: Raga) => {
     e.stopPropagation();
@@ -132,7 +128,7 @@ export const Explore: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#A9232D]" />
               <span className="text-[11px] font-bold uppercase tracking-widest text-[#77736D]">
-                CARTOGRAPHIC INDEX · VOL. IV / HINDUSTANI & CARNATIC CANONS
+                CARTOGRAPHIC INDEX · VOL. IV / HINDUSTANI CLASSICAL CANONS
               </span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-[#252421] dark:text-[#F2EEE7]">
@@ -142,38 +138,45 @@ export const Explore: React.FC = () => {
 
           <div className="max-w-md">
             <p className="text-xs md:text-sm text-[#77736D] leading-relaxed">
-              A curated journey through 1,200 classical frameworks across Hindustani and Carnatic genealogies. Visualized through contemporary archival artworks and microtonal contours.
+              A curated journey through 1,200 classical frameworks across Hindustani lineages and Ashta Prahar cycles. Visualized through contemporary archival artworks and microtonal contours.
             </p>
           </div>
         </div>
 
-        {/* Traditions Filter Bar & Temperament Callout */}
+        {/* 10 Bhatkhande Thaats Filter Bar & Temperament Callout */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {[
-              { id: 'All', label: 'All Traditions', count: '1,248' },
-              { id: 'Hindustani', label: 'Hindustani', count: '680' },
-              { id: 'Carnatic', label: 'Carnatic', count: '568' }
+              { id: 'All', label: 'All Thaats' },
+              { id: 'Bilawal', label: 'Bilawal' },
+              { id: 'Kalyan', label: 'Kalyan' },
+              { id: 'Khamaj', label: 'Khamaj' },
+              { id: 'Kafi', label: 'Kafi' },
+              { id: 'Asavari', label: 'Asavari' },
+              { id: 'Bhairav', label: 'Bhairav' },
+              { id: 'Bhairavi', label: 'Bhairavi' },
+              { id: 'Todi', label: 'Todi' },
+              { id: 'Poorvi', label: 'Poorvi' },
+              { id: 'Marwa', label: 'Marwa' }
             ].map((t) => (
               <button
                 key={t.id}
-                onClick={() => setSelectedTradition(t.id as any)}
+                onClick={() => setSelectedThaat(t.id)}
                 className={`px-3 py-1.5 rounded text-xs transition-colors flex items-center gap-1.5 ${
-                  selectedTradition === t.id
+                  selectedThaat === t.id
                     ? 'bg-[#252421] dark:bg-[#F2EEE7] text-[#F5F2EC] dark:text-[#171716] font-semibold'
                     : 'bg-[#EAE5DC] dark:bg-[#22211F] text-[#77736D] hover:text-[#252421] dark:hover:text-[#F2EEE7]'
                 }`}
               >
-                {selectedTradition === t.id && (
+                {selectedThaat === t.id && (
                   <span className="w-1.5 h-1.5 rounded-full bg-[#A9232D]" />
                 )}
                 <span>{t.label}</span>
-                <span className="text-[10px] opacity-70 font-mono">{t.count}</span>
               </button>
             ))}
           </div>
 
-          <div className="text-[11px] font-mono tracking-wider uppercase text-[#77736D] flex items-center gap-2">
+          <div className="text-[11px] font-mono tracking-wider uppercase text-[#77736D] flex items-center gap-2 whitespace-nowrap">
             <span className="w-6 h-[1px] bg-[#DCD6CC] dark:bg-[#2E2D2A]" />
             <span>TEMPERAMENT: JUST INTONATION (22 SHRU-TIS)</span>
           </div>
@@ -212,7 +215,7 @@ export const Explore: React.FC = () => {
 
           {/* 12 Swara Buttons Row */}
           <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-12 gap-2">
-            {swaraButtons.map((btn) => {
+            {activeSwaraMatrix.map((btn) => {
               const isSelected = selectedPhrase.some(p => p.replace(/['\.]/g, '') === btn.token.replace(/['\.]/g, ''));
               return (
                 <button
@@ -237,24 +240,27 @@ export const Explore: React.FC = () => {
 
           {/* 4 Dropdown Filters Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-[#DCD6CC] dark:border-[#2E2D2A]">
-            {/* Thaat / Melakarta */}
+            {/* Thaat */}
             <div className="space-y-1">
               <label className="text-[10px] font-bold uppercase tracking-wider text-[#77736D] block">
-                THAAT / MELAKARTA
+                BHATKHANDE THAAT
               </label>
               <select
                 value={selectedThaat}
                 onChange={(e) => setSelectedThaat(e.target.value)}
                 className="w-full px-3 py-2 rounded bg-[#F5F2EC] dark:bg-[#171716] border border-[#DCD6CC] dark:border-[#2E2D2A] text-xs text-[#252421] dark:text-[#F2EEE7] focus:outline-none focus:border-[#A9232D]"
               >
-                <option value="All">All Thaats & Melakartas ▾</option>
-                <option value="Kalyan">Kalyan (Parent IX / 65 Mechakalyani)</option>
-                <option value="Asavari">Asavari (20 Natabhairavi)</option>
-                <option value="Kafi">Kafi (22 Kharaharapriya)</option>
-                <option value="Bhairav">Bhairav (16 Chakravakam)</option>
-                <option value="Bhairavi">Bhairavi (8 Hanumatodi)</option>
-                <option value="Todi">Todi (45 Shubhapantuvarali)</option>
-                <option value="Marwa">Marwa (53 Gamanashrama)</option>
+                <option value="All">All 10 Bhatkhande Thaats ▾</option>
+                <option value="Bilawal">Bilawal (Shuddha Scale)</option>
+                <option value="Kalyan">Kalyan (Teevra Ma)</option>
+                <option value="Khamaj">Khamaj (Komal Ni)</option>
+                <option value="Kafi">Kafi (Komal Ga, Komal Ni)</option>
+                <option value="Asavari">Asavari (Komal Ga, Dha, Ni)</option>
+                <option value="Bhairav">Bhairav (Komal Re, Komal Dha)</option>
+                <option value="Bhairavi">Bhairavi (All Komal: r, g, d, n)</option>
+                <option value="Todi">Todi (Komal Re, Ga, Dha + Teevra Ma)</option>
+                <option value="Poorvi">Poorvi (Komal Re, Dha + Teevra Ma)</option>
+                <option value="Marwa">Marwa (Komal Re + Teevra Ma)</option>
               </select>
             </div>
 

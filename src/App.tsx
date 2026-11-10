@@ -13,6 +13,9 @@ import { Concert } from './pages/Concert';
 import { Archive } from './pages/Archive';
 import { Artists } from './pages/Artists';
 import { Toolkit } from './pages/Toolkit';
+import { Create } from './pages/Create';
+
+import { ThemeProvider } from './context/ThemeContext';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -34,6 +37,7 @@ function AnimatedRoutes() {
           <Route path="/learn" element={<Learn />} />
           <Route path="/learn/:id" element={<CoursePlayer />} />
           <Route path="/concert" element={<Concert />} />
+          <Route path="/create" element={<Create />} />
           <Route path="/archive" element={<Archive />} />
           <Route path="/artists" element={<Artists />} />
           <Route path="/toolkit" element={<Toolkit />} />
@@ -45,15 +49,17 @@ function AnimatedRoutes() {
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#171716] text-[#252421] dark:text-[#F2EEE7] font-sans selection:bg-[#EAE5DC] dark:selection:bg-[#22211F] selection:text-[#252421] dark:selection:text-[#F2EEE7] transition-colors">
-        <Navigation />
-        <main>
-          <AnimatedRoutes />
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#171716] text-[#252421] dark:text-[#F2EEE7] font-sans selection:bg-[#EAE5DC] dark:selection:bg-[#22211F] selection:text-[#252421] dark:selection:text-[#F2EEE7] transition-colors">
+          <Navigation />
+          <main>
+            <AnimatedRoutes />
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

@@ -5,14 +5,22 @@ import { MOCK_ARTISTS, MOCK_GHARANAS, MOCK_RAGAS, Artist, GharanaLineage } from 
 
 export const Artists: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedTradition, setSelectedTradition] = useState<'All' | 'Hindustani' | 'Carnatic'>('All');
   const [selectedGharana, setSelectedGharana] = useState<string>('All');
 
   const filteredArtists = MOCK_ARTISTS.filter(artist => {
-    const matchesTradition = selectedTradition === 'All' || artist.tradition === selectedTradition || artist.tradition === 'Both';
-    const matchesGharana = selectedGharana === 'All' || artist.gharana.toLowerCase().includes(selectedGharana.toLowerCase());
-    return matchesTradition && matchesGharana;
+    return selectedGharana === 'All' || artist.gharana.toLowerCase().includes(selectedGharana.toLowerCase());
   });
+
+  const gharanas = [
+    { id: 'All', label: 'All Gharanas' },
+    { id: 'Kirana', label: 'Kirana' },
+    { id: 'Indore', label: 'Indore' },
+    { id: 'Maihar', label: 'Maihar' },
+    { id: 'Jaipur', label: 'Jaipur-Atrauli' },
+    { id: 'Patiala', label: 'Patiala' },
+    { id: 'Gwalior', label: 'Gwalior' },
+    { id: 'Agra', label: 'Agra' }
+  ];
 
   return (
     <div className="w-full bg-[#F5F2EC] dark:bg-[#171716] min-h-screen text-[#252421] dark:text-[#F2EEE7] pt-8 pb-24 px-6 transition-colors">
@@ -30,43 +38,34 @@ export const Artists: React.FC = () => {
             Masters & Lineages.
           </h1>
           <p className="text-sm md:text-base text-[#77736D] leading-relaxed">
-            Preserving centuries of oral musical memory across Gharana genealogies, vocal aesthetics, and instrumental masters of Hindustani and Carnatic traditions.
+            Preserving centuries of oral musical memory across Gharana genealogies, vocal aesthetics, and instrumental masters of the Hindustani classical tradition.
           </p>
         </div>
 
-        {/* Tradition & Gharana Filters */}
+        {/* Hindustani Gharana Filters */}
         <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#DCD6CC] dark:border-[#2E2D2A]">
-          {/* Tradition Segmented Tabs */}
-          <div className="flex items-center gap-2">
-            {(['All', 'Hindustani', 'Carnatic'] as const).map(trad => (
+          {/* Gharana Segmented Tabs */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {gharanas.map(g => (
               <button
-                key={trad}
-                onClick={() => setSelectedTradition(trad)}
-                className={`px-3.5 py-1.5 rounded text-xs transition-colors ${
-                  selectedTradition === trad
+                key={g.id}
+                onClick={() => setSelectedGharana(g.id)}
+                className={`px-3.5 py-1.5 rounded text-xs transition-colors flex items-center gap-1.5 ${
+                  selectedGharana === g.id
                     ? 'bg-[#252421] dark:bg-[#F2EEE7] text-[#F5F2EC] dark:text-[#171716] font-semibold'
                     : 'bg-[#EAE5DC] dark:bg-[#22211F] text-[#77736D] hover:text-[#252421] dark:hover:text-[#F2EEE7]'
                 }`}
               >
-                {trad === 'All' ? 'All Traditions' : trad}
+                {selectedGharana === g.id && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A9232D]" />
+                )}
+                <span>{g.label}</span>
               </button>
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-[#77736D]">Lineage:</span>
-            <select
-              value={selectedGharana}
-              onChange={(e) => setSelectedGharana(e.target.value)}
-              className="px-3 py-1.5 rounded bg-white dark:bg-[#22211F] border border-[#DCD6CC] dark:border-[#2E2D2A] text-xs text-[#252421] dark:text-[#F2EEE7] focus:outline-none focus:border-[#A9232D]"
-            >
-              <option value="All">All Gharanas / Traditions ▾</option>
-              <option value="Kirana">Kirana Gharana</option>
-              <option value="Indore">Indore Gharana</option>
-              <option value="Maihar">Maihar Gharana</option>
-              <option value="Jaipur">Jaipur-Atrauli Gharana</option>
-              <option value="Carnatic">Carnatic Tradition</option>
-            </select>
+          <div className="text-[11px] font-mono tracking-wider uppercase text-[#77736D]">
+            <span>HINDUSTANI VOCAL & INSTRUMENTAL MAESTROS</span>
           </div>
         </div>
 

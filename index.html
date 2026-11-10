@@ -3,15 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RagaLens — The Operating System for Indian Classical Music</title>
-    <meta name="description" content="A curated archival journey through 1,200 classical frameworks across Hindustani and Carnatic genealogies. Visualized through contemporary archival artworks and microtonal contours." />
-    <meta property="og:title" content="RagaLens — The Operating System for Indian Classical Music" />
-    <meta property="og:description" content="A curated archival journey through 1,200 classical frameworks across Hindustani and Carnatic genealogies. Visualized through contemporary archival artworks and microtonal contours." />
+    <title>RagaLens — Digital Universe of Hindustani Classical Music</title>
+    <meta name="description" content="A curated archival journey through classical frameworks across Hindustani lineages and Ashta Prahar cycles. Visualized through contemporary archival artworks, authentic accompaniment, and microtonal contours." />
+    <meta property="og:title" content="RagaLens — Digital Universe of Hindustani Classical Music" />
+    <meta property="og:description" content="A curated archival journey through classical frameworks across Hindustani lineages and Ashta Prahar cycles. Visualized through contemporary archival artworks, authentic accompaniment, and microtonal contours." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('ragalens-theme');
+          if (stored === 'light') {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+          } else {
+            // Default to dark mode as preferred
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-[#F5F2EC] text-[#252421] antialiased selection:bg-[#EAE5DC] selection:text-[#252421]">
+  <body class="bg-[#F5F2EC] dark:bg-[#171716] text-[#252421] dark:text-[#F2EEE7] antialiased selection:bg-[#EAE5DC] dark:selection:bg-[#22211F] selection:text-[#252421] dark:selection:text-[#F2EEE7]">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

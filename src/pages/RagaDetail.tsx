@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Play, Pause, Volume2, ArrowLeft, ArrowRight, Bookmark, Share2, Check, SlidersHorizontal, Layers, Music, Info } from 'lucide-react';
 import { MOCK_RAGAS, Raga } from '../lib/ragaData';
@@ -65,6 +65,39 @@ export const RagaDetail: React.FC = () => {
     }
   };
 
+  const [savedBookmarks, setSavedBookmarks] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch('/api/bookmarks')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.bookmarks)) {
+          setSavedBookmarks(data.bookmarks);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleToggleBookmark = async (itemId: string) => {
+    try {
+      const res = await fetch('/api/bookmarks/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: itemId })
+      });
+      const data = await res.json();
+      if (data && typeof data.bookmarked === 'boolean') {
+        setSavedBookmarks(prev => 
+          data.bookmarked ? [...prev, itemId] : prev.filter(b => b !== itemId)
+        );
+      }
+    } catch (err) {
+      setSavedBookmarks(prev => 
+        prev.includes(itemId) ? prev.filter(b => b !== itemId) : [...prev, itemId]
+      );
+    }
+  };
+
   return (
     <div className="w-full bg-[#F5F2EC] dark:bg-[#171716] min-h-screen text-[#252421] dark:text-[#F2EEE7] pt-6 pb-32 px-6 transition-colors">
       <div className="max-w-7xl mx-auto space-y-12">
@@ -89,6 +122,16 @@ export const RagaDetail: React.FC = () => {
             <span>PAHARI RATRI DWITIYA (12 AM - 3 AM)</span>
             <span>·</span>
             <span>Standard Pitch: 240.00 Hz (C#)</span>
+            <span>·</span>
+            <button
+              onClick={() => handleToggleBookmark(raga.id)}
+              className={`flex items-center gap-1 transition-colors ${
+                savedBookmarks.includes(raga.id) ? 'text-[#A9232D] font-bold' : 'hover:text-[#A9232D]'
+              }`}
+            >
+              <Bookmark size={12} fill={savedBookmarks.includes(raga.id) ? 'currentColor' : 'none'} />
+              <span>{savedBookmarks.includes(raga.id) ? 'Bookmarked' : 'Bookmark Raga'}</span>
+            </button>
             <span>·</span>
             <button onClick={handleCopyLink} className="hover:text-[#A9232D] flex items-center gap-1">
               {copiedLink ? <Check size={12} className="text-green-600" /> : <Share2 size={12} />}
@@ -514,8 +557,16 @@ export const RagaDetail: React.FC = () => {
                     {activeRecordingIdx === idx ? <Pause size={14} /> : <Play size={14} fill="currentColor" className="ml-0.5" />}
                   </button>
 
-                  <button className="text-[#77736D] hover:text-[#A9232D]">
-                    <Bookmark size={16} />
+                  <button
+                    onClick={() => handleToggleBookmark(rec.id)}
+                    className={`transition-colors p-1.5 rounded hover:bg-[#EAE5DC] dark:hover:bg-[#171716] ${
+                      savedBookmarks.includes(rec.id)
+                        ? 'text-[#A9232D]'
+                        : 'text-[#77736D] hover:text-[#A9232D]'
+                    }`}
+                    title={savedBookmarks.includes(rec.id) ? 'Remove Bookmark' : 'Bookmark Recording'}
+                  >
+                    <Bookmark size={16} fill={savedBookmarks.includes(rec.id) ? 'currentColor' : 'none'} />
                   </button>
                 </div>
               </div>

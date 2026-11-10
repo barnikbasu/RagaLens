@@ -4,10 +4,12 @@ import { Search, Bookmark, User, Moon, Sun, X, ArrowRight, Music, SlidersHorizon
 import { cn } from '../../lib/utils';
 import { MOCK_RAGAS, MOCK_ARTISTS } from '../../lib/ragaData';
 
+import { useTheme } from '../../context/ThemeContext';
+
 export const Navigation: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [isDark, setIsDark] = useState(false);
+  const { isDark, toggleTheme } = useTheme();
   const [bookmarkedCount, setBookmarkedCount] = useState(2);
   const navigate = useNavigate();
 
@@ -25,21 +27,24 @@ export const Navigation: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const toggleTheme = () => {
-    if (document.documentElement.classList.contains('dark')) {
-      document.documentElement.classList.remove('dark');
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.add('dark');
-      setIsDark(true);
-    }
-  };
+  // Load real bookmarks count from backend
+  useEffect(() => {
+    fetch('/api/bookmarks')
+      .then(res => res.json())
+      .then(data => {
+        if (typeof data.count === 'number') {
+          setBookmarkedCount(data.count);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Explore', path: '/explore' },
     { name: 'Detect', path: '/detect' },
     { name: 'Learn', path: '/learn' },
+    { name: 'Create', path: '/create' },
     { name: 'Archive', path: '/archive' },
     { name: 'Artists', path: '/artists' },
     { name: 'Toolkit', path: '/toolkit' }
@@ -142,11 +147,15 @@ export const Navigation: React.FC = () => {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-1.5 text-[#77736D] hover:text-[#252421] dark:hover:text-[#F2EEE7] transition-colors"
-              title="Toggle Light / Dark Canvas"
+              className="p-1.5 rounded-md text-[#77736D] hover:text-[#252421] dark:hover:text-[#F2EEE7] hover:bg-[#EAE5DC] dark:hover:bg-[#22211F] transition-all cursor-pointer flex items-center justify-center"
+              title={isDark ? "Switch to Light Canvas (Warm Khadi Tone)" : "Switch to Dark Canvas (Charcoal Tone)"}
               aria-label="Toggle Theme"
             >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              {isDark ? (
+                <Sun size={16} className="text-amber-500 hover:rotate-45 transition-transform duration-300" />
+              ) : (
+                <Moon size={16} className="text-[#252421] hover:-rotate-12 transition-transform duration-300" />
+              )}
             </button>
 
             {/* Mobile Search Icon */}

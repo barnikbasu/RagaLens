@@ -437,8 +437,8 @@ function renderArtworkContent(type: string, raga?: Raga | null) {
       return (
         <div className="relative w-full h-full min-h-[260px] bg-[#F4EFE6] flex items-center justify-center p-6 text-center">
           <div className="space-y-2">
-            <h4 className="font-display text-2xl text-[#3D2E24]">{raga?.name || 'Classical Raga'}</h4>
-            <p className="text-xs text-[#8A7564] font-serif italic">{raga?.artMedium || 'Indian Heritage Art & Music'}</p>
+            <h4 className="text-2xl font-bold text-[#252421] dark:text-[#F2EEE7]">{raga?.name || 'Classical Raga'}</h4>
+            <p className="text-xs text-[#77736D] italic">{raga?.artMedium || 'Indian Heritage Art & Music'}</p>
           </div>
         </div>
       );

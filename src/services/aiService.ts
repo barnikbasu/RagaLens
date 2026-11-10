@@ -17,23 +17,23 @@ export class AIService {
 
   async askAITutor(query: string, context?: string): Promise<TutorResponse> {
     const prompt = `
-      You are RagaLens AI Musicologist & Theory Tutor, an authoritative, respectful, and source-grounded scholar in Indian Classical Music (both Hindustani and Carnatic traditions).
+      You are RagaLens AI Musicologist & Theory Tutor, an authoritative, respectful, and source-grounded scholar in Hindustani (North Indian) Classical Music exclusively.
       
       User Inquiry: "${query}"
       ${context ? `Current Musicological Context: ${context}` : ''}
 
       Guidelines:
-      1. Explain raga theory, grammar (Arohana, Avarohana, Vadi, Samvadi, Pakad, Chalan, Nyasa).
-      2. Distinguish Hindustani and Carnatic counterparts when relevant without flattening their differences (e.g. Yaman vs Mechakalyani, Bhairav vs Mayamalavagowla, Malkauns vs Hindolam).
-      3. Cite foundational treatises where applicable (e.g., Sangeeta Ratnakara, Chaturdandi Prakasika, Bhatkhande Kramik Pustak Malika, Ain-i-Akbari, Bharata's Natyashastra).
-      4. Acknowledge musicological debate, oral Gharana variations, and areas of uncertainty where oral traditions diverge. Never fabricate facts, biographies, or recording sources.
+      1. Explain Hindustani raga theory and grammar: Arohana, Avarohana, Vadi, Samvadi, Pakad, Chalan, Nyasa, Meend, Andolan, Kan-swara, and Ashta Prahar (time of day).
+      2. Ground classifications strictly in the 10 Bhatkhande Thaats (Bilawal, Kalyan, Khamaj, Kafi, Asavari, Bhairav, Bhairavi, Todi, Poorvi, Marwa).
+      3. Cite foundational Hindustani treatises and archives where applicable (e.g., Sangeeta Ratnakara, Pandit V.N. Bhatkhande's Kramik Pustak Malika, Ain-i-Akbari, Ragadarpana, Sangita Parijata).
+      4. Acknowledge Gharana lineage aesthetics (Kirana, Indore, Gwalior, Agra, Maihar, Patiala, Jaipur-Atrauli) and areas where oral paramparas diverge. Never fabricate facts, biographies, or recording sources.
       
       Respond in structured JSON format with:
       {
         "answer": "Concise, deep, editorial explanation formatted cleanly with clear paragraphs.",
-        "traditionDistinction": "Notes on Hindustani vs Carnatic terminology or gamaka nuances (optional)",
+        "traditionDistinction": "Notes on Gharana aesthetic nuances, vocal phrasing, or microtonal shru-ti calibration (optional)",
         "scholarlyCitations": ["Array of historical treatise or archival references"],
-        "suggestedRagas": ["Related ragas for exploration"],
+        "suggestedRagas": ["Related Hindustani ragas for exploration"],
         "uncertaintyDisclaimer": "Any cautionary note on gharana divergence or oral transmission differences"
       }
     `;
@@ -50,8 +50,8 @@ export class AIService {
     } catch (error) {
       console.warn("AI Tutor call failed, returning deterministic response:", error);
       return {
-        answer: `In Indian classical music, ragas are dynamic modal frameworks governed by melodic progression (chalan), resting notes (nyasa), and microtonal ornamentation (gamaka/andolan).`,
-        scholarlyCitations: ["Sangeeta Ratnakara (c. 1240 CE)", "Bhatkhande Sangeet Shastra"],
+        answer: `In Hindustani classical music, ragas are dynamic modal frameworks governed by melodic progression (chalan), resting notes (nyasa), and microtonal ornamentation (meend and andolan) within the Ashta Prahar temporal cycle.`,
+        scholarlyCitations: ["Sangeeta Ratnakara (c. 1240 CE)", "Pandit V.N. Bhatkhande's Sangeet Shastra"],
         suggestedRagas: ["Yaman", "Darbari Kanada", "Bhimpalasi"],
         uncertaintyDisclaimer: "Note: Live AI grounding operates under academic consensus; oral gharana interpretations may present aesthetic variations."
       };
@@ -60,19 +60,19 @@ export class AIService {
 
   async detectRagaFromTranscription(transcription: string) {
     const prompt = `
-      You are an expert musicologist in Indian Classical Music. 
+      You are an expert musicologist in Hindustani Classical Music. 
       Given the following swara sequence or transcribed passage: "${transcription}",
-      Perform deterministic and contextual raga candidate evaluation.
+      Perform deterministic and contextual Hindustani raga candidate evaluation.
       Output valid JSON with fields:
-      - name: Primary matching raga name
-      - thaat: Associated Thaat or Melakarta
+      - name: Primary matching Hindustani raga name
+      - thaat: Associated Bhatkhande Thaat (Bilawal, Kalyan, Khamaj, Kafi, Asavari, Bhairav, Bhairavi, Todi, Poorvi, Marwa)
       - vadi: Vadi swara
       - samvadi: Samvadi swara
       - mood: Array of associated rasas
       - arohana: Ascending scale
       - avarohana: Descending scale
       - pakad: Defining melodic phrase
-      - reasoning: Step-by-step musicological attribution evidence
+      - reasoning: Step-by-step musicological attribution evidence based on chalan and phraseology
       - confidence: Posterior match probability percentage (e.g. 94.8)
     `;
 
